@@ -7,23 +7,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-
 @Entity
-public class Vereda {
+public class CategoriaActividad {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "exception_seq_generator")
-	private int idVereda;
+	private int idCategoria;
 	@NotNull()
 	@Column(unique= true)
-	private String nombre;
+	private String nombre;	
 
-	public int getIdVereda() {
-		return idVereda;
+	public int getIdCategoria() {
+		return idCategoria;
 	}
 
-	public void setIdVereda(int idVereda) {
-		this.idVereda = idVereda;
+	public void setIdCategoria(int idCategoria) {
+		this.idCategoria = idCategoria;
 	}
 
 	public String getNombre() {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Persona implements Serializable {
@@ -23,15 +25,20 @@ public class Persona implements Serializable {
 	private long cedulaPersona;
 	private String nombre;
 	private String apellido;
-	private long celular;
+	private long celular;	
+	@NotNull()
+	@Column(unique= true)
 	private String correo;
 	private String contrasenia;
 	@ManyToOne
 	@JoinColumn(name="profesion_id", referencedColumnName = "idProfesion")
 	private Profesion profesion;
+	
 	@Enumerated(EnumType.STRING)
 	private RolPersona rolPersona;
-	private boolean isActive;
+	
+	@Enumerated(EnumType.STRING)
+	private Estado estado;
 
 	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	private List<Actividad> listaActividades;
@@ -102,12 +109,14 @@ public class Persona implements Serializable {
 		this.rolPersona = rolPersona;
 	}
 
-	public boolean isActive() {
-		return isActive;
+	public Estado getEstado() {
+		return estado;
 	}
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}	
+	public void setEstado(Estado estado) {
+		this.estado = estado;
+	}
+
+	
 	
 }
