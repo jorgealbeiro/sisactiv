@@ -287,8 +287,12 @@ public class SisActivaApplicationController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/registrarNarracion", method = RequestMethod.POST)
-	public String registrarVereda(@Valid @RequestBody Narracion narracion) {
+	@RequestMapping(value = "/registrarNarracion/cedula/{cedula}", method = RequestMethod.POST)
+	public String registrarNarracion(@Valid @RequestBody Narracion narracion , @PathVariable("cedula") Long cedula) {
+		System.out.println("buuu" + JsonManager.toJson(narracion));
+		AdultoMayor adultoMayor = adultoMayorRepository.findById(cedula).get();
+		System.out.println("personita..." + adultoMayor.getNombre());
+		narracion.setCedulaAdulto(adultoMayor);
 		narracionRepository.save(narracion);
 		return "Guardado";
 	}
