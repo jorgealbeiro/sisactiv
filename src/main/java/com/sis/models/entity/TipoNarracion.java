@@ -1,5 +1,6 @@
 package com.sis.models.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +14,7 @@ public class TipoNarracion {
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "exception_seq_generator")
 	private long idTipoNarracion;
 	@NotNull
+	@Column(unique= true)
 	private String nombre;
 
 	public long getIdTipoNarracion() {

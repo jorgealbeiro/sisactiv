@@ -7,11 +7,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -101,42 +99,57 @@ public class SisActivaApplicationController {
 		return "Usuario no existe";
 	}
 
-//	@RequestMapping(value = "/login/{correo}/{contrasenia}", method = RequestMethod.GET)
-//	public ResponseEntity<String> login1( @PathVariable(value="correo") String usuario, @PathVariable(value="contrasenia") String password) {
-//		Persona p = personaRepository.findByCorreo(usuario);
-//		Persona p1 = personaRepository.findByContrasenia(usuario);
-//		if (p.getNombre()==p1.getNombre()) {
-//			return new ResponseEntity<String>("bienvenido"+ p.getNombre(), HttpStatus.OK);
-//		}else {
-//			return new ResponseEntity<String>("no existe", HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
-//		
 
 	@RequestMapping(value = "/obtenerPersona/{id}", method = RequestMethod.GET)
 	public String obtenerPersona(@PathVariable Long id) {
 		return JsonManager.toJson(personaRepository.findById(id));
 	}
 
+	/**
+	 * Metodo que elimina persona en la base de datos 
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "/borrarPersona/{id}", method = RequestMethod.DELETE)
 	public String borrarPersona(@PathVariable Long id) {
 		personaRepository.deleteById(id);
 		return "Borrado";
 	}
 	
+	/**
+	 * Metodo para eliminar pesona pero no de la base de datos
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "/eliminarPersona/{id}", method = RequestMethod.DELETE)
-	public String eliminarPersona(@PathVariable Long id) {
-		Persona a = personaRepository.findById(id).get();
+	public @ResponseBody List<Actividad> eliminarPersona(@PathVariable Long id) {
+		Persona a = personaRepository.findById(id).get();		
 		a.setEstado(Estado.ELIMINADO);
 		personaRepository.deleteById(id);
-		personaRepository.save(a);		
-		return "Borrado";
+		personaRepository.save(a);	
+		List<Actividad> ma = eliminarActividadesDEPersona(id);		
+		return ma;
 	}
+
+private List<Actividad> eliminarActividadesDEPersona(Long id) {
+	List<Actividad> m = actividadRepository.activiCedula(id);
+	for (Actividad actividad : m) {			
+		Actividad h = actividadRepository.findById(actividad.getId()).get();
+		h.setEstado(Estado.ELIMINADO);
+		actividadRepository.deleteById(actividad.getId());
+		actividadRepository.save(h);
+	}
+	List<Actividad> n = actividadRepository.activiCedula(id);
+		return n;
+	}
+
 
 	@RequestMapping(value = "/editarPersona", method = RequestMethod.PUT)
 	public String editarPersona(@Valid @RequestBody Persona persona) {
 		return JsonManager.toJson(personaRepository.save(persona));
 	}
+	
+	
 
 	// -------------------------------------Actividades-----------------------------------------------//
 	/**
@@ -148,7 +161,40 @@ public class SisActivaApplicationController {
 	public String obtenerActividades() {
 		return JsonManager.toJson(actividadRepository.findAll());
 	}
-
+	
+	/**
+	 * metodo que obtiene a todas las actividades  activas
+	 */
+	@RequestMapping(value = "/obtenerActividadesActivas", method = RequestMethod.GET)
+	public @ResponseBody List<Actividad> obtenerActividadesActivas() {
+		return  actividadRepository.getByEstadoActivos();
+	}
+	
+	/**
+	 * metodo que obtiene a todas las Actividades  eliminadas
+	 */
+	@RequestMapping(value = "/obtenerActividadesEliminadas", method = RequestMethod.GET)
+	public @ResponseBody List<Actividad> obtenerActividadesEliminadas() {
+		return  actividadRepository.getByEstadoEliminado();
+	}
+	
+	/**
+	 * metodo que obtiene a todas las actividades  realizadas
+	 */
+	@RequestMapping(value = "/obtenerActividadesRealizadas", method = RequestMethod.GET)
+	public @ResponseBody List<Actividad> obtenerActividadesRealizadas() {
+		return  actividadRepository.getByEstadoRealizadas();
+	}
+	
+	/**
+	 * metodo que obtiene a todas las actividades  sin realizar y que aun estan activas 
+	 */
+	@RequestMapping(value = "/obtenerActividadesSinRealizar", method = RequestMethod.GET)
+	public @ResponseBody List<Actividad> obtenerActividadesSinRealizar() {
+		return  actividadRepository.getByEstadoSinRealizar();
+	}
+	
+	
 	/**
 	 * Servicio que registra y agrega a la base de datos una actividad
 	 * 
@@ -168,12 +214,35 @@ public class SisActivaApplicationController {
 	public String obtenerActividad(@PathVariable Long id) {
 		return JsonManager.toJson(actividadRepository.findById(id));
 	}
+	
+	
+	@RequestMapping(value ="/obtenerActividadFecha/{since}", method = RequestMethod.GET)
+    public String showAddedSince(@PathVariable("since") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date since) {
+        return since + "";
+    }
+	
+	
 
 	@RequestMapping(value = "/borrarActividad/{id}", method = RequestMethod.DELETE)
 	public String borrarActividad(@PathVariable Long id) {
 		actividadRepository.deleteById(id);
 		return "Borrado";
 	}
+	
+	/**
+	 * Metodo principal para eliminar una actividad sin borrarlo de la base de datos 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/eliminarActividad/{id}", method = RequestMethod.DELETE)
+	public String eliminarActividad(@PathVariable Long id) {
+		Actividad h = actividadRepository.findById(id).get();
+		h.setEstado(Estado.ELIMINADO);
+		actividadRepository.deleteById(id);
+		actividadRepository.save(h);		
+		return "Actividad borrada";
+	}
+	
 
 	@RequestMapping(value = "/editarActividad/{cedula}", method = RequestMethod.PUT)
 	public String editarActividad(@Valid @RequestBody Actividad actividad, @PathVariable("cedula") Long cedulaPersona) {
@@ -254,6 +323,11 @@ public class SisActivaApplicationController {
 		return "Borrado";
 	}
 
+	/**
+	 * Metodo principal para eliminar una abuelito sin borrarlo de la base de datos 
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "/eliminarAdulto/{id}", method = RequestMethod.DELETE)
 	public String eliminarAdulto(@PathVariable Long id) {
 		AdultoMayor a = adultoMayorRepository.findById(id).get();
@@ -265,7 +339,8 @@ public class SisActivaApplicationController {
 
 
 	@RequestMapping(value = "/editarAdulto/{cedula}", method = RequestMethod.PUT)
-	public String editarAdulto(@Valid @RequestBody AdultoMayor adultoMayor) {
+	public String editarAdulto(@Valid @RequestBody AdultoMayor adultoMayor, @PathVariable("cedula") Long cedula) {
+		adultoMayorRepository.deleteById(cedula);
 		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
 	}
 
@@ -280,6 +355,34 @@ public class SisActivaApplicationController {
 	public String obtenerNarraciones() {
 		return JsonManager.toJson(narracionRepository.findAll());
 	}
+	 
+	/**
+	 * OBTENER NARRACION POR ID
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/obtenerNarracion/{id}", method = RequestMethod.GET)
+	public String obtenerNarracion(@PathVariable Long id) {
+		return JsonManager.toJson(narracionRepository.findById(id));
+	}
+	
+	
+	/**
+	 * metodo que obtiene a todas las NARRACIONES  activas
+	 */
+	@RequestMapping(value = "/obtenerNarracionesActivas", method = RequestMethod.GET)
+	public @ResponseBody List<Narracion> obtenerNarracionesActivas() {
+		return  narracionRepository.getByEstadoActivos();
+	}
+	
+	/**
+	 * metodo que obtiene a todas las NARRACIONES  eliminadas
+	 */
+	@RequestMapping(value = "/obtenerNarracionesEliminadas", method = RequestMethod.GET)
+	public @ResponseBody List<Narracion> obtenerNarracionesEliminadas() {
+		return  narracionRepository.getByEstadoEliminado();
+	}
+	
 
 	/**
 	 * Servicio que registra y agrega a la base de datos una narracion
@@ -287,30 +390,53 @@ public class SisActivaApplicationController {
 	 * @param p
 	 * @return
 	 */
+	@RequestMapping(value = "/registrarNarracion", method = RequestMethod.POST)
+	public String registrarVereda(@Valid @RequestBody Narracion narracion) {
+		narracionRepository.save(narracion);
+		return "Guardado";
+	}
+	
+	
 	@RequestMapping(value = "/registrarNarracion/cedula/{cedula}", method = RequestMethod.POST)
 	public String registrarNarracion(@Valid @RequestBody Narracion narracion , @PathVariable("cedula") Long cedula) {
-		System.out.println("buuu" + JsonManager.toJson(narracion));
 		AdultoMayor adultoMayor = adultoMayorRepository.findById(cedula).get();
-		System.out.println("personita..." + adultoMayor.getNombre());
 		narracion.setCedulaAdulto(adultoMayor);
 		narracionRepository.save(narracion);
 		return "Guardado";
 	}
+	
+	
 
-	@RequestMapping(value = "/obtenerNarracion/{id}", method = RequestMethod.GET)
-	public String obtenerNarracion(@PathVariable Long id) {
-		return JsonManager.toJson(narracionRepository.findById(id));
-	}
-
+	/*
+	 * Metodo para eliminar narracion, pero no de la base de datos
+	 */
 	@RequestMapping(value = "/borrarNarracion/{id}", method = RequestMethod.DELETE)
 	public String borrarNarracion(@PathVariable Long id) {
+		Narracion aux = narracionRepository.findById(id).get();
+		aux.setEstado(Estado.ELIMINADO);		
 		narracionRepository.deleteById(id);
-		return "Borrado";
+		narracionRepository.save(aux);
+		return "Narracion Borrada";
 	}
+	
+	
 
 	@RequestMapping(value = "/editarNarracion", method = RequestMethod.PUT)
 	public String editarNarracion(@Valid @RequestBody Narracion narracion) {
 		return JsonManager.toJson(narracionRepository.save(narracion));
 	}
+		
+	/*
+	 * Metodo para editar narracion full
+	 */
+	@RequestMapping(value = "/editarNarracion/{id}", method = RequestMethod.PUT)
+	public String editarNarracion(@Valid @RequestBody Narracion narracion, @PathVariable("id") Long id) {
+		narracionRepository.deleteById(id);
+		return JsonManager.toJson(narracionRepository.save(narracion));
+	}
+	
+	
+	
+	
 
 }

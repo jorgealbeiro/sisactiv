@@ -4,9 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,6 +36,10 @@ public class AdultoMayor {
 	@JoinColumn(name="vereda_id", referencedColumnName = "idVereda")
 	private Vereda vereda;
 	private long celular;
+	
+	@Column(unique= true)
+	private String manilla;
+	
 	private String rutaImagen;
 	
 	@Enumerated(EnumType.STRING)
@@ -130,4 +137,15 @@ public class AdultoMayor {
 	public void setEstadoAfiliacion(EstadoAfiliacion estadoAfiliacion) {
 		this.estadoAfiliacion = estadoAfiliacion;
 	}
+
+	public String getManilla() {
+		return manilla;
+	}
+
+	public void setManilla(String manilla) {
+		this.manilla = manilla;
+	}
+	
+	
+	
 }

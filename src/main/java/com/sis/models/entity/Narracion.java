@@ -3,6 +3,8 @@ package com.sis.models.entity;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,6 +33,9 @@ public class Narracion {
 	private Date fecha;
 	private String descripcion;
 	private String rutaAudio;
+	
+	@Enumerated(EnumType.STRING)
+	private Estado estado;
 
 	public long getIdNarracion() {
 		return idNarracion;
@@ -87,4 +92,15 @@ public class Narracion {
 	public void setRutaAudio(String rutaAudio) {
 		this.rutaAudio = rutaAudio;
 	}
+
+	public Estado getEstado() {
+		return estado;
+	}
+
+	public void setEstado(Estado estado) {
+		this.estado = estado;
+	}
+	
+	
+	
 }
