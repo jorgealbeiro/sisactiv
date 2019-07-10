@@ -344,6 +344,10 @@ private List<Actividad> eliminarActividadesDEPersona(Long id) {
 		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
 	}
 
+	@RequestMapping(value = "/editarAdulto", method = RequestMethod.PUT)
+	public String editarAdulto(@Valid @RequestBody AdultoMayor adultoMayor) {		
+		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
+	}
 
 	// -----------------------------------------NARRACIONES--------------------------------------------
 	/**
