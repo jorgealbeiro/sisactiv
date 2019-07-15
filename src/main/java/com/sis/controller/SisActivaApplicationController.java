@@ -196,6 +196,12 @@ private List<Actividad> eliminarActividadesDEPersona(Long id) {
 		return  actividadRepository.getByEstadoSinRealizar();
 	}
 	
+	@RequestMapping(value = "/obtenerActividadesColaborador/{id}", method = RequestMethod.GET)
+	public @ResponseBody List<Actividad> obtenerActividadesColaborador(@PathVariable long id) {
+		return actividadRepository.getActividadesColaborador(id);
+	}
+	
+	
 	
 	/**
 	 * Servicio que registra y agrega a la base de datos una actividad

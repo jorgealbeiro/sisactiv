@@ -29,6 +29,9 @@ public interface ActividadRepository extends CrudRepository<Actividad, Long>{
 
 	@Query("SELECT a FROM Actividad a WHERE a.estadoActividad =  com.sis.models.entity.EstadoActividad.SINREALIZAR AND a.estado =  com.sis.models.entity.Estado.ACTIVO")
 	List<Actividad> getByEstadoSinRealizar();
+
+	@Query("SELECT a FROM Actividad a WHERE a.personaEncargada.cedulaPersona =?1")
+	List<Actividad> getActividadesColaborador(long id);
 	
 	
 //	@Query("SELECT * FROM Actividad a WHERE a.fecha <= :fecha)")
