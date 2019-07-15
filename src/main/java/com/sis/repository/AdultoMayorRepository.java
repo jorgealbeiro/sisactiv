@@ -7,7 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.sis.models.entity.AdultoMayor;
-import com.sis.models.entity.EstadoAfiliacion;
 
 @Repository
 public interface AdultoMayorRepository extends CrudRepository<AdultoMayor, Long>{
