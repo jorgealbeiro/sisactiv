@@ -306,10 +306,22 @@ private List<Actividad> eliminarActividadesDEPersona(Long id) {
 		return JsonManager.toJson(adultoMayorRepository.findById(id));
 	}
 	
+	/**
+	 * obtiene adultos por sisben 
+	 * @param id  sisben a ingresar
+	 * @return lista de abuelitos por el sisben indicado 
+	 */
 	@RequestMapping(value = "/obtenerAdultoSisben/{id}", method = RequestMethod.GET)
 	public @ResponseBody List<AdultoMayor> obtenerAdultoSisben(@PathVariable float id) {
 		return adultoMayorRepository.getAdultoSisben(id);
 	}
+	
+	@RequestMapping(value = "/obtenerAdultoVereda/{ve}", method = RequestMethod.GET)
+	public @ResponseBody List<AdultoMayor> obtenerAdultoVereda(@PathVariable Integer ve) {
+		return adultoMayorRepository.getAdultoVereda(ve);
+	}
+	
+	
 	
 	/**
 	 * Servicio que registra y agrega a la base de datos un adulto mayor

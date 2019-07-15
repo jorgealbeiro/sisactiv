@@ -24,6 +24,9 @@ public interface AdultoMayorRepository extends CrudRepository<AdultoMayor, Long>
 
 	@Query("SELECT a FROM AdultoMayor a WHERE a.sisben =?1")
 	List<AdultoMayor> getAdultoSisben(float id);
+		
+	@Query("SELECT a FROM AdultoMayor a WHERE a.vereda.idVereda =?1")
+	List<AdultoMayor> getAdultoVereda(int ve);
 	
 	
 	
