@@ -40,6 +40,8 @@ public class SisActivaApplicationController {
 	private ActividadRepository actividadRepository;
 	@Autowired
 	private PersonaRepository personaRepository;
+	
+
 
 	/**
 	 * Servicio que obtiene lista de personas
@@ -297,7 +299,17 @@ private List<Actividad> eliminarActividadesDEPersona(Long id) {
 	public @ResponseBody List<AdultoMayor> obtenerAdultosDesafiliados() {
 		return  adultoMayorRepository.getByEstadoAfiliacionDesafiliado();
 	}
+		
 	
+	@RequestMapping(value = "/obtenerAdulto/{id}", method = RequestMethod.GET)
+	public String obtenerAdulto(@PathVariable Long id) {
+		return JsonManager.toJson(adultoMayorRepository.findById(id));
+	}
+	
+	@RequestMapping(value = "/obtenerAdultoSisben/{id}", method = RequestMethod.GET)
+	public @ResponseBody List<AdultoMayor> obtenerAdultoSisben(@PathVariable float id) {
+		return adultoMayorRepository.getAdultoSisben(id);
+	}
 	
 	/**
 	 * Servicio que registra y agrega a la base de datos un adulto mayor
@@ -311,10 +323,7 @@ private List<Actividad> eliminarActividadesDEPersona(Long id) {
 		return "Guardado";
 	}
 
-	@RequestMapping(value = "/obtenerAdulto/{id}", method = RequestMethod.GET)
-	public String obtenerAdulto(@PathVariable Long id) {
-		return JsonManager.toJson(adultoMayorRepository.findById(id));
-	}
+	
 	
 
 	@RequestMapping(value = "/borrarAdulto/{id}", method = RequestMethod.DELETE)
@@ -344,10 +353,6 @@ private List<Actividad> eliminarActividadesDEPersona(Long id) {
 		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
 	}
 
-	@RequestMapping(value = "/editarAdulto", method = RequestMethod.PUT)
-	public String editarAdulto(@Valid @RequestBody AdultoMayor adultoMayor) {		
-		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
-	}
 
 	// -----------------------------------------NARRACIONES--------------------------------------------
 	/**

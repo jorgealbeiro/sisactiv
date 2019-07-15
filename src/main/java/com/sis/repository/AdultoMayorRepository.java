@@ -21,6 +21,10 @@ public interface AdultoMayorRepository extends CrudRepository<AdultoMayor, Long>
 
 	@Query("SELECT a FROM AdultoMayor a WHERE a.estadoAfiliacion =  com.sis.models.entity.EstadoAfiliacion.DESAFILIADO")
 	List<AdultoMayor> getByEstadoAfiliacionDesafiliado();
+
+	@Query("SELECT a FROM AdultoMayor a WHERE a.sisben =?1")
+	List<AdultoMayor> getAdultoSisben(float id);
+	
 	
 	
 
