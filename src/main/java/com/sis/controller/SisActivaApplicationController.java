@@ -38,10 +38,13 @@ import com.sis.repository.NarracionRepository;
 import com.sis.repository.PersonaRepository;
 
 import net.sf.jasperreports.engine.JRException;
+import rfid.SerialComm;
 
 @CrossOrigin(origins = { "http://localhost:4200", "http://192.168.0.28:4200" })
 @RestController
 public class SisActivaApplicationController {
+
+	int vez = 0;
 
 	@Autowired
 	private NarracionRepository narracionRepository;
@@ -61,6 +64,10 @@ public class SisActivaApplicationController {
 	 */
 	@RequestMapping(value = "/obtenerPersonas", method = RequestMethod.GET)
 	public String obtenerListaPersonas() {
+		if (vez < 1) {
+			SerialComm.getInstance().initialize();
+			vez++;
+		}
 		return JsonManager.toJson(personaRepository.findAll());
 	}
 
@@ -104,12 +111,17 @@ public class SisActivaApplicationController {
 	@RequestMapping(value = "/login/{correo}/{contrasenia}", method = RequestMethod.GET)
 	public String login(@PathVariable(value = "correo") String usuario,
 			@PathVariable(value = "contrasenia") String password) {
+//		if (vez < 1) {
+//			se.initialize();
+//			vez++;
+//		}
 		Collection<Persona> admin = personaRepository.autenticar(usuario, password);
 //		Persona p = personaRepository.autenticar1(usuario, password);
 		if (admin.size() > 0) {
 			return JsonManager.toJson(admin);
 		}
 		return "Usuario no existe";
+
 	}
 
 	@RequestMapping(value = "/obtenerPersona/{id}", method = RequestMethod.GET)
@@ -387,7 +399,21 @@ public class SisActivaApplicationController {
 		adultoMayorRepository.deleteById(cedula);
 		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
 	}
+	
+	@RequestMapping(value = "/agregarManilla/{cedula}", method = RequestMethod.PUT)
+	public String agregarManilla( @PathVariable("cedula") Long cedula) {
+		AdultoMayor adm = adultoMayorRepository.findById(cedula).get();
+		adm.setManilla(SerialComm.getInstance().manilla);
+		adultoMayorRepository.save(adm);
+		return SerialComm.getInstance().manilla;
+	}
+	
+	@RequestMapping(value = "/obtenerManilla", method = RequestMethod.PUT)
+	public String obtenerManilla( ) {		
+		return SerialComm.getInstance().manilla;
+	}
 
+	
 	// -----------------------------------------NARRACIONES--------------------------------------------
 	/**
 	 * Servicio que obtiene lista de narraciones
@@ -474,11 +500,7 @@ public class SisActivaApplicationController {
 
 //	---------------------ASISTENCIA -------------------------------------
 
-//	@RequestMapping(value = "/obtenerAdultosMayores", method = RequestMethod.GET)
-//	public String obtenerAdultosMayores() {
-//		return JsonManager.toJson(adultoMayorRepository.findAll());
-//	}
-	
+
 	/**
 	 * Servicio que obtiene lista de ASISTENCIAS
 	 * 
@@ -493,10 +515,7 @@ public class SisActivaApplicationController {
 	public @ResponseBody List<Asistencia1> obtenerAsistenciaDeActividad(@PathVariable long id) {
 		return asistencia1Repository.obtenerAsistenciaActividad(id);
 	}
-	
-	
-	
-	
+
 	/**
 	 * OBTENER asistencia POR ID
 	 * 
@@ -526,7 +545,7 @@ public class SisActivaApplicationController {
 	}
 
 	@RequestMapping(value = "/registrarAsistencia", method = RequestMethod.POST)
-	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1) {		
+	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1) {
 		asistencia1Repository.save(asistencia1);
 		return "Guardado";
 	}
