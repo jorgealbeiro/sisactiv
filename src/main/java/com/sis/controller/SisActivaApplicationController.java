@@ -121,6 +121,7 @@ public class SisActivaApplicationController {
 	@RequestMapping(value = "/login1/{correo}/{contrasenia}", method = RequestMethod.GET)
 	public @ResponseBody Persona obtenerPersonasLogin(@PathVariable(value = "correo") String usuario,
 			@PathVariable(value = "contrasenia") String password) {
+		
 		return personaRepository.getByPersonaLogin(usuario, password);
 	}
 	

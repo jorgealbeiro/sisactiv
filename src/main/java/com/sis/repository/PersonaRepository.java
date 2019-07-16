@@ -25,6 +25,7 @@ public interface PersonaRepository extends CrudRepository<Persona, Long>{
 	@Query("SELECT a FROM Persona a WHERE a.estado =  com.sis.models.entity.Estado.ELIMINADO")
 	List<Persona> getByEstadoEliminado();
 
+	@Query("SELECT a FROM Persona a WHERE a.correo = (:usuario) AND a.contrasenia = (:password) AND a.estado =  com.sis.models.entity.Estado.ACTIVO")
 	Persona getByPersonaLogin(String usuario, String password);
 	
 	
