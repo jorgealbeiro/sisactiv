@@ -12,7 +12,7 @@ import com.sis.models.entity.Persona;
 @Repository
 public interface PersonaRepository extends CrudRepository<Persona, Long>{
 
-	@Query(value = "SELECT * FROM persona a WHERE a.correo = (:correo) AND a.contrasenia = (:contrasenia)", nativeQuery = true)
+	@Query(value = "SELECT * FROM persona a WHERE a.correo = (:correo) AND a.contrasenia = (:contrasenia) ", nativeQuery = true)
 	Collection<Persona> autenticar(String correo, String contrasenia);
 
 	Persona findByCorreo(String correo);
@@ -24,5 +24,9 @@ public interface PersonaRepository extends CrudRepository<Persona, Long>{
 
 	@Query("SELECT a FROM Persona a WHERE a.estado =  com.sis.models.entity.Estado.ELIMINADO")
 	List<Persona> getByEstadoEliminado();
+
+	Persona getByPersonaLogin(String usuario, String password);
+	
+	
 }
 

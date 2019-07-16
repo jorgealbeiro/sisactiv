@@ -28,7 +28,7 @@ public class SerialComm implements SerialPortEventListener {
 	
 	SerialPort serialPort;
 
-	public  String manilla = "";
+	public  String manilla = "no detecto manilla";
 	
 	private static final String PORT = "COM3";
 

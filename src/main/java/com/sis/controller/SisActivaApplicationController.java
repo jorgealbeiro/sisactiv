@@ -45,6 +45,7 @@ import rfid.SerialComm;
 public class SisActivaApplicationController {
 
 	int vez = 0;
+	String idmanilla = "";
 
 	@Autowired
 	private NarracionRepository narracionRepository;
@@ -58,16 +59,15 @@ public class SisActivaApplicationController {
 	private Asistencia1Repository asistencia1Repository;
 
 	/**
-	 * Servicio que obtiene lista de personas
-	 * 
+	 * Servicio que obtiene lista de personas 
 	 * @return
 	 */
 	@RequestMapping(value = "/obtenerPersonas", method = RequestMethod.GET)
 	public String obtenerListaPersonas() {
-		if (vez < 1) {
-			SerialComm.getInstance().initialize();
-			vez++;
-		}
+//		if (vez < 1) {
+//			SerialComm.getInstance().initialize();
+//			vez++;
+//		}
 		return JsonManager.toJson(personaRepository.findAll());
 	}
 
@@ -89,7 +89,6 @@ public class SisActivaApplicationController {
 
 	/**
 	 * Servicio que registra y agrega a la base de datos una persona
-	 * 
 	 * @param p
 	 * @return
 	 */
@@ -111,12 +110,7 @@ public class SisActivaApplicationController {
 	@RequestMapping(value = "/login/{correo}/{contrasenia}", method = RequestMethod.GET)
 	public String login(@PathVariable(value = "correo") String usuario,
 			@PathVariable(value = "contrasenia") String password) {
-//		if (vez < 1) {
-//			se.initialize();
-//			vez++;
-//		}
 		Collection<Persona> admin = personaRepository.autenticar(usuario, password);
-//		Persona p = personaRepository.autenticar1(usuario, password);
 		if (admin.size() > 0) {
 			return JsonManager.toJson(admin);
 		}
@@ -124,6 +118,13 @@ public class SisActivaApplicationController {
 
 	}
 
+	@RequestMapping(value = "/login1/{correo}/{contrasenia}", method = RequestMethod.GET)
+	public @ResponseBody Persona obtenerPersonasLogin(@PathVariable(value = "correo") String usuario,
+			@PathVariable(value = "contrasenia") String password) {
+		return personaRepository.getByPersonaLogin(usuario, password);
+	}
+	
+	
 	@RequestMapping(value = "/obtenerPersona/{id}", method = RequestMethod.GET)
 	public String obtenerPersona(@PathVariable Long id) {
 		return JsonManager.toJson(personaRepository.findById(id));
@@ -216,6 +217,14 @@ public class SisActivaApplicationController {
 	@RequestMapping(value = "/obtenerActividadesSinRealizar", method = RequestMethod.GET)
 	public @ResponseBody List<Actividad> obtenerActividadesSinRealizar() {
 		return actividadRepository.getByEstadoSinRealizar();
+	}
+	
+	/**
+	 * metodo que obtiene a todas las actividades sin realizar y que estan eliminadas
+	 */
+	@RequestMapping(value = "/obtenerActividadesSinRealizarEliminadas", method = RequestMethod.GET)
+	public @ResponseBody List<Actividad> obtenerActividadesSinRealizarEliminadas() {
+		return actividadRepository.getByEstadoSinRealizarEliminadas();
 	}
 
 	@RequestMapping(value = "/obtenerActividadesColaborador/{id}", method = RequestMethod.GET)
@@ -399,20 +408,33 @@ public class SisActivaApplicationController {
 		adultoMayorRepository.deleteById(cedula);
 		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
 	}
-	
+
 	@RequestMapping(value = "/agregarManilla/{cedula}", method = RequestMethod.PUT)
-	public String agregarManilla( @PathVariable("cedula") Long cedula) {
-		AdultoMayor adm = adultoMayorRepository.findById(cedula).get();
-		adm.setManilla(SerialComm.getInstance().manilla);
-		adultoMayorRepository.save(adm);
-		return SerialComm.getInstance().manilla;
-	}
-	
-	@RequestMapping(value = "/obtenerManilla", method = RequestMethod.PUT)
-	public String obtenerManilla( ) {		
-		return SerialComm.getInstance().manilla;
+	public String agregarManilla(@Valid @RequestBody AdultoMayor adf ,@PathVariable("cedula") Long cedula) {
+		AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
+		if (admv == null) {
+			AdultoMayor adm = adultoMayorRepository.findById(cedula).get();
+			adm.setManilla(SerialComm.getInstance().manilla);
+			adultoMayorRepository.save(adm);
+			return " Manilla registrada a " + adm.getNombre() + " con numero: "+ SerialComm.getInstance().manilla ;
+		} else {
+//			System.out.println(admv.getNombre());
+			return "Manilla asignada a   " + admv.getNombre();
+		}
+
 	}
 
+	@RequestMapping(value = "/obtenerManilla", method = RequestMethod.GET)
+	public String obtenerManilla() {
+		if (idmanilla.equals(SerialComm.getInstance().manilla)) {
+			return "no detecto manilla";
+		} else {
+			idmanilla = SerialComm.getInstance().manilla;
+			return SerialComm.getInstance().manilla;
+		}
+	}
+
+	
 	
 	// -----------------------------------------NARRACIONES--------------------------------------------
 	/**
@@ -500,7 +522,6 @@ public class SisActivaApplicationController {
 
 //	---------------------ASISTENCIA -------------------------------------
 
-
 	/**
 	 * Servicio que obtiene lista de ASISTENCIAS
 	 * 
@@ -533,10 +554,10 @@ public class SisActivaApplicationController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/registrarAsistencia/{act}/{cedula}", method = RequestMethod.POST)
+	@RequestMapping(value = "/registrarAsistencia/{act}/{mani}", method = RequestMethod.POST)
 	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1, @PathVariable("act") Long id,
-			@PathVariable("cedula") Long cedula) {
-		AdultoMayor adultoMayor = adultoMayorRepository.findById(cedula).get();
+			@PathVariable("mani") String mani) {
+		AdultoMayor adultoMayor = adultoMayorRepository.obtenerAdultoManilla(mani);
 		asistencia1.setCedulaAdulto(adultoMayor);
 		Actividad a = actividadRepository.findById(id).get();
 		asistencia1.setIdActividad(a);
