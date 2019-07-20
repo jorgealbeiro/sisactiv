@@ -447,6 +447,28 @@ public class SisActivaApplicationController {
 	public String obtenerNarraciones() {
 		return JsonManager.toJson(narracionRepository.findAll());
 	}
+	
+	/**
+	 * Metodo que obtiene las narraciones de un colaborador en especifico 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/obtenerNarracionesColaborador/{id}", method = RequestMethod.GET)
+	public @ResponseBody List<Narracion> obtenerNarracionesColaborador(@PathVariable long id) {
+		return narracionRepository.obtenerNarracionesColaborador(id);
+	}
+	
+	/**
+	 * Metodo que obtiene las narraciones de un Adulto mayor en especifico 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/obtenerNarracionesAdultoMayor/{id}", method = RequestMethod.GET)
+	public @ResponseBody List<Narracion> obtenerNarracionesAdultoMayor(@PathVariable long id) {
+		return narracionRepository.getNarracionesAdultoMayor(id);
+	}
+	
+	
 
 	/**
 	 * OBTENER NARRACION POR ID
@@ -475,6 +497,9 @@ public class SisActivaApplicationController {
 		return narracionRepository.getByEstadoEliminado();
 	}
 
+	
+	
+	
 	/**
 	 * Servicio que registra y agrega a la base de datos una narracion
 	 * 
@@ -487,9 +512,11 @@ public class SisActivaApplicationController {
 		return "Guardado";
 	}
 
-	@RequestMapping(value = "/registrarNarracion/cedula/{cedula}", method = RequestMethod.POST)
-	public String registrarNarracion(@Valid @RequestBody Narracion narracion, @PathVariable("cedula") Long cedula) {
+	@RequestMapping(value = "/registrarNarracion/{cedulaAdulto}/{cedulaColaborador}", method = RequestMethod.POST)
+	public String registrarNarracion(@Valid @RequestBody Narracion narracion, @PathVariable("cedulaAdulto") Long cedula, @PathVariable("cedulaColaborador") Long cedulaColaborador) {
 		AdultoMayor adultoMayor = adultoMayorRepository.findById(cedula).get();
+		Persona p = personaRepository.findById(cedulaColaborador).get();
+		narracion.setCedulaPersona(p);
 		narracion.setCedulaAdulto(adultoMayor);
 		narracionRepository.save(narracion);
 		return "Guardado";
@@ -512,6 +539,13 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(narracionRepository.save(narracion));
 	}
 
+	@RequestMapping(value = "/borrarNarracion1/{id}", method = RequestMethod.DELETE)
+	public String borrarNarracion1(@PathVariable Long id) {		
+		narracionRepository.deleteById(id);		
+		return "Narracion Borrada";
+	}
+
+	
 	/*
 	 * Metodo para editar narracion full
 	 */

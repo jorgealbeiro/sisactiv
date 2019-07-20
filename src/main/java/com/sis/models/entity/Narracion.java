@@ -25,6 +25,9 @@ public class Narracion {
 	@JoinColumn(name="cedula_adulto", referencedColumnName = "cedula")
 	private AdultoMayor AdultoMayor;
 	@ManyToOne
+	@JoinColumn(name="cedula_Colaborador", referencedColumnName = "cedulaPersona")
+	private Persona cedulaPersona;
+	@ManyToOne
 	@JoinColumn(name="tipo_narracion", referencedColumnName = "idTipoNarracion")
 	private TipoNarracion tipoNarracion;
 	private String nombre;
@@ -99,6 +102,15 @@ public class Narracion {
 
 	public void setEstado(Estado estado) {
 		this.estado = estado;
+	}
+	
+
+	public Persona getCedulaPersona() {
+		return cedulaPersona;
+	}
+
+	public void setCedulaPersona(Persona cedulaPersona) {
+		this.cedulaPersona = cedulaPersona;
 	}
 	
 	
