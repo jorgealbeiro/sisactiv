@@ -38,6 +38,7 @@ public class AdultoMayor {
 	@Column(unique= true)
 	private String manilla;
 	
+	
 	private String rutaImagen;
 	
 	@Enumerated(EnumType.STRING)

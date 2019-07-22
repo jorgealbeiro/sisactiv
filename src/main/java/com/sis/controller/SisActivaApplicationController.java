@@ -60,9 +60,9 @@ public class SisActivaApplicationController {
 	@Autowired
 	private Asistencia1Repository asistencia1Repository;
 
-	
 	/**
-	 * Servicio que obtiene lista de personas 
+	 * Servicio que obtiene lista de personas
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/obtenerPersonas", method = RequestMethod.GET)
@@ -78,7 +78,7 @@ public class SisActivaApplicationController {
 	 * metodo que obtiene a todas las personas activas
 	 */
 	@RequestMapping(value = "/obtenerPersonasActivas", method = RequestMethod.GET)
-	
+
 	public @ResponseBody List<Persona> obtenerPersonas() {
 		return personaRepository.getByEstadoActivos();
 	}
@@ -93,6 +93,7 @@ public class SisActivaApplicationController {
 
 	/**
 	 * Servicio que registra y agrega a la base de datos una persona
+	 * 
 	 * @param p
 	 * @return
 	 */
@@ -125,11 +126,10 @@ public class SisActivaApplicationController {
 	@RequestMapping(value = "/login1/{correo}/{contrasenia}", method = RequestMethod.GET)
 	public @ResponseBody Persona obtenerPersonasLogin(@PathVariable(value = "correo") String usuario,
 			@PathVariable(value = "contrasenia") String password) {
-		
+
 		return personaRepository.getByPersonaLogin(usuario, password);
 	}
-	
-	
+
 	@RequestMapping(value = "/obtenerPersona/{id}", method = RequestMethod.GET)
 	public String obtenerPersona(@PathVariable Long id) {
 		return JsonManager.toJson(personaRepository.findById(id));
@@ -223,9 +223,10 @@ public class SisActivaApplicationController {
 	public @ResponseBody List<Actividad> obtenerActividadesSinRealizar() {
 		return actividadRepository.getByEstadoSinRealizar();
 	}
-	
+
 	/**
-	 * metodo que obtiene a todas las actividades sin realizar y que estan eliminadas
+	 * metodo que obtiene a todas las actividades sin realizar y que estan
+	 * eliminadas
 	 */
 	@RequestMapping(value = "/obtenerActividadesSinRealizarEliminadas", method = RequestMethod.GET)
 	public @ResponseBody List<Actividad> obtenerActividadesSinRealizarEliminadas() {
@@ -236,40 +237,37 @@ public class SisActivaApplicationController {
 	public @ResponseBody List<Actividad> obtenerActividadesColaborador(@PathVariable long id) {
 		return actividadRepository.getActividadesColaborador(id);
 	}
-	
+
 	@RequestMapping(value = "/ActividaFecha/{diaInicial}/{diaFinal}", method = RequestMethod.GET)
-	public @ResponseBody List<Actividad> obtenerActividaFecha(@PathVariable String diaInicial, @PathVariable String diaFinal) {	
-		return actividadRepository.getrActividaFecha(diaInicial, diaFinal);		
+	public @ResponseBody List<Actividad> obtenerActividaFecha(@PathVariable String diaInicial,
+			@PathVariable String diaFinal) {
+		return actividadRepository.getrActividaFecha(diaInicial, diaFinal);
 	}
-	
+
 	@RequestMapping(value = "/totalActividadesUltimosMeses", method = RequestMethod.GET)
-	public @ResponseBody List<Integer> obtenerActividaFecha1() {	
-		List<Integer> aux = new ArrayList<>();	
-		for (int i = 0; i < 7; i++) {		
+	public @ResponseBody List<Integer> obtenerActividaFecha1() {
+		List<Integer> aux = new ArrayList<>();
+		for (int i = 0; i < 7; i++) {
 			Date d1 = new Date(System.currentTimeMillis());
-			d1.setMonth(d1.getMonth()-i);
+			d1.setMonth(d1.getMonth() - i);
 			d1.setDate(1);
-			String diaInicial = d1+"";
+			String diaInicial = d1 + "";
 			Date d2 = new Date(System.currentTimeMillis());
-			d2.setMonth(d2.getMonth()-i+1);
-			d2.setDate(1);	
-			String diaFinal = d2+"";
+			d2.setMonth(d2.getMonth() - i + 1);
+			d2.setDate(1);
+			String diaFinal = d2 + "";
 			List<Actividad> m = actividadRepository.getrActividaFecha(diaInicial, diaFinal);
 			aux.add(m.size());
 		}
-		return aux;		
+		return aux;
 	}
-	
-	
-	
-	
+
 	@RequestMapping(value = "/horario/filtro/{diaInicial}/{diaFinal}", method = RequestMethod.GET)
 	public String getHorariosFiltrados(@PathVariable String diaInicial, @PathVariable String diaFinal) {
 		Date d = new Date(System.currentTimeMillis());
-		
+
 		return JsonManager.toJson(actividadRepository.filterHorario(diaInicial, diaFinal));
 	}
-	
 
 	/**
 	 * Servicio que registra y agrega a la base de datos una actividad
@@ -410,18 +408,25 @@ public class SisActivaApplicationController {
 		return adultoMayorRepository.getAdultoVereda(ve);
 	}
 
+	
 	/**
-	 * Servicio que registra y agrega a la base de datos un adulto mayor
-	 * 
+	 * Servicio que registra y agrega a la base de datos un adulto mayor 
 	 * @param p
 	 * @return
 	 */
 	@RequestMapping(value = "/registrarAdultoMayor", method = RequestMethod.POST)
-	public String registrarVereda(@Valid @RequestBody AdultoMayor adultoMayor) {
+	public String registrarAdultoMayor(@Valid @RequestBody AdultoMayor adultoMayor) {
+		List<AdultoMayor> aux = adultoMayorRepository.obtenerAdultocc(adultoMayor.getCedula()); 
 		adultoMayorRepository.save(adultoMayor);
-		return "Guardado";
+		if (aux.size() > 0) {		
+			adultoMayorRepository.findById(adultoMayor.getCedula());
+			adultoMayorRepository.save(aux.get(0));
+			return "Ya esta registrada esa identificacion";
+		} 
+		return "Guardado";		
 	}
 
+	
 	@RequestMapping(value = "/borrarAdulto/{id}", method = RequestMethod.DELETE)
 	public String borrarAdulto(@PathVariable Long id) {
 		adultoMayorRepository.deleteById(id);
@@ -442,6 +447,15 @@ public class SisActivaApplicationController {
 		adultoMayorRepository.save(a);
 		return "Borrado";
 	}
+	
+	@RequestMapping(value = "/desafiliarAdulto/{id}", method = RequestMethod.DELETE)
+	public String desafiliarAdulto(@PathVariable Long id) {
+		AdultoMayor a = adultoMayorRepository.findById(id).get();
+		a.setEstadoAfiliacion(EstadoAfiliacion.DESAFILIADO);
+		adultoMayorRepository.deleteById(id);
+		adultoMayorRepository.save(a);
+		return "Borrado";
+	}
 
 	@RequestMapping(value = "/editarAdulto/{cedula}", method = RequestMethod.PUT)
 	public String editarAdulto(@Valid @RequestBody AdultoMayor adultoMayor, @PathVariable("cedula") Long cedula) {
@@ -449,14 +463,17 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
 	}
 
+	
+	
+	
 	@RequestMapping(value = "/agregarManilla/{cedula}", method = RequestMethod.PUT)
-	public String agregarManilla(@Valid @RequestBody AdultoMayor adf ,@PathVariable("cedula") Long cedula) {
+	public String agregarManilla(@Valid @RequestBody AdultoMayor adf, @PathVariable("cedula") Long cedula) {
 		AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
 		if (admv == null) {
 			AdultoMayor adm = adultoMayorRepository.findById(cedula).get();
 			adm.setManilla(SerialComm.getInstance().manilla);
 			adultoMayorRepository.save(adm);
-			return " Manilla registrada a " + adm.getNombre() + " con numero: "+ SerialComm.getInstance().manilla ;
+			return " Manilla registrada a " + adm.getNombre() + " con numero: " + SerialComm.getInstance().manilla;
 		} else {
 //			System.out.println(admv.getNombre());
 			return "Manilla asignada a   " + admv.getNombre();
@@ -474,8 +491,6 @@ public class SisActivaApplicationController {
 		}
 	}
 
-	
-	
 	// -----------------------------------------NARRACIONES--------------------------------------------
 	/**
 	 * Servicio que obtiene lista de narraciones
@@ -486,20 +501,21 @@ public class SisActivaApplicationController {
 	public String obtenerNarraciones() {
 		return JsonManager.toJson(narracionRepository.findAll());
 	}
-	
+
 	@RequestMapping(value = "/obtenerNarracionesList", method = RequestMethod.GET)
 	public @ResponseBody List<Narracion> obtenerCantidadNarracionesList() {
 		return (List<Narracion>) narracionRepository.findAll();
 	}
-	
+
 	@RequestMapping(value = "/obtenerCantidadNarraciones", method = RequestMethod.GET)
 	public @ResponseBody int obtenerCantidadNarraciones() {
 		List<Narracion> m = (List<Narracion>) narracionRepository.findAll();
 		return m.size();
 	}
-	
+
 	/**
-	 * Metodo que obtiene las narraciones de un colaborador en especifico 
+	 * Metodo que obtiene las narraciones de un colaborador en especifico
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -507,9 +523,10 @@ public class SisActivaApplicationController {
 	public @ResponseBody List<Narracion> obtenerNarracionesColaborador(@PathVariable long id) {
 		return narracionRepository.obtenerNarracionesColaborador(id);
 	}
-	
+
 	/**
-	 * Metodo que obtiene las narraciones de un Adulto mayor en especifico 
+	 * Metodo que obtiene las narraciones de un Adulto mayor en especifico
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -517,8 +534,6 @@ public class SisActivaApplicationController {
 	public @ResponseBody List<Narracion> obtenerNarracionesAdultoMayor(@PathVariable long id) {
 		return narracionRepository.getNarracionesAdultoMayor(id);
 	}
-	
-	
 
 	/**
 	 * OBTENER NARRACION POR ID
@@ -547,9 +562,6 @@ public class SisActivaApplicationController {
 		return narracionRepository.getByEstadoEliminado();
 	}
 
-	
-	
-	
 	/**
 	 * Servicio que registra y agrega a la base de datos una narracion
 	 * 
@@ -563,7 +575,8 @@ public class SisActivaApplicationController {
 	}
 
 	@RequestMapping(value = "/registrarNarracion/{cedulaAdulto}/{cedulaColaborador}", method = RequestMethod.POST)
-	public String registrarNarracion(@Valid @RequestBody Narracion narracion, @PathVariable("cedulaAdulto") Long cedula, @PathVariable("cedulaColaborador") Long cedulaColaborador) {
+	public String registrarNarracion(@Valid @RequestBody Narracion narracion, @PathVariable("cedulaAdulto") Long cedula,
+			@PathVariable("cedulaColaborador") Long cedulaColaborador) {
 		AdultoMayor adultoMayor = adultoMayorRepository.findById(cedula).get();
 		Persona p = personaRepository.findById(cedulaColaborador).get();
 		narracion.setCedulaPersona(p);
@@ -590,12 +603,11 @@ public class SisActivaApplicationController {
 	}
 
 	@RequestMapping(value = "/borrarNarracion1/{id}", method = RequestMethod.DELETE)
-	public String borrarNarracion1(@PathVariable Long id) {		
-		narracionRepository.deleteById(id);		
+	public String borrarNarracion1(@PathVariable Long id) {
+		narracionRepository.deleteById(id);
 		return "Narracion Borrada";
 	}
 
-	
 	/*
 	 * Metodo para editar narracion full
 	 */
@@ -632,7 +644,7 @@ public class SisActivaApplicationController {
 	public String obtenerAsistencia(@PathVariable Long id) {
 		return JsonManager.toJson(asistencia1Repository.findById(id));
 	}
-	
+
 //	@RequestMapping(value = "/totalAsistenciaMes", method = RequestMethod.GET)
 //	public @ResponseBody List<Integer> obtenertotalAsistenciaMes() {	
 //		List<Integer> aux = new ArrayList<>();	
@@ -651,9 +663,7 @@ public class SisActivaApplicationController {
 ////		}
 //		return aux;		
 //	}
-	
-	
-	
+
 //	@RequestMapping(value = "/totalActividadesUltimosMeses", method = RequestMethod.GET)
 //	public @ResponseBody List<Integer> obtenerActividaFecha1() {	
 //		List<Integer> aux = new ArrayList<>();	
@@ -671,7 +681,6 @@ public class SisActivaApplicationController {
 //		}
 //		return aux;		
 //	}
-	
 
 	/**
 	 * Servicio que registra y agrega a la base de datos una narracion

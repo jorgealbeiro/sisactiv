@@ -29,4 +29,7 @@ public interface AdultoMayorRepository extends CrudRepository<AdultoMayor, Long>
 	@Query("SELECT a FROM AdultoMayor a WHERE a.manilla =(:manilla)")
 	AdultoMayor obtenerAdultoManilla(String manilla);
 
+	@Query(value = "select * from adulto_mayor a WHERE a.cedula = ?1 ", nativeQuery = true)	
+	List<AdultoMayor> obtenerAdultocc(long cedula);
+
 }
