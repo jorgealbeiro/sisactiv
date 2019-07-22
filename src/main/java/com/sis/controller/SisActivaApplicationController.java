@@ -241,7 +241,7 @@ public class SisActivaApplicationController {
 		return actividadRepository.getrActividaFecha(diaInicial, diaFinal);		
 	}
 	
-	@RequestMapping(value = "/ActividaFecha1", method = RequestMethod.GET)
+	@RequestMapping(value = "/totalActividadesUltimosMeses", method = RequestMethod.GET)
 	public @ResponseBody List<Integer> obtenerActividaFecha1() {	
 		List<Integer> aux = new ArrayList<>();	
 		for (int i = 0; i < 7; i++) {		
@@ -256,8 +256,7 @@ public class SisActivaApplicationController {
 			List<Actividad> m = actividadRepository.getrActividaFecha(diaInicial, diaFinal);
 			aux.add(m.size());
 		}
-		return aux;
-		
+		return aux;		
 	}
 	
 	@RequestMapping(value = "/ActividaFechas", method = RequestMethod.GET)
