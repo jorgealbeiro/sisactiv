@@ -27,6 +27,7 @@ import com.sis.models.entity.Actividad;
 import com.sis.models.entity.AdultoMayor;
 import com.sis.models.entity.Asistencia1;
 import com.sis.models.entity.Estado;
+import com.sis.models.entity.EstadoActividad;
 import com.sis.models.entity.EstadoAfiliacion;
 import com.sis.models.entity.Narracion;
 import com.sis.models.entity.Persona;
@@ -259,22 +260,7 @@ public class SisActivaApplicationController {
 		return aux;		
 	}
 	
-	@RequestMapping(value = "/ActividaFechas", method = RequestMethod.GET)
-	public @ResponseBody List<Actividad> fechas1() {
-		int i = 0;
-//		for (int i = 1; i < 7; i++) {
-			Date d1 = new Date(System.currentTimeMillis());
-			d1.setMonth(d1.getMonth()-i);
-			d1.setDate(1);
-			Date d2 = new Date(System.currentTimeMillis());
-			d2.setMonth(d2.getMonth()-i+1);
-			d2.setDate(1);		
-			System.out.println(d1+"ffffffffffffffffffffffffffff");
-			System.out.println(d2 + "jjjjjjjjjjjjjjjjjjjjjjjjjjj");
-//			List<Actividad> aux = actividadRepository.getrActividaFecha(d1+"", d2+"");
-			return actividadRepository.getrActividaFecha(d1+"", d2+"");
-//		}
-	}
+	
 	
 	
 	@RequestMapping(value = "/horario/filtro/{diaInicial}/{diaFinal}", method = RequestMethod.GET)
@@ -326,6 +312,7 @@ public class SisActivaApplicationController {
 	public String eliminarActividad(@PathVariable Long id) {
 		Actividad h = actividadRepository.findById(id).get();
 		h.setEstado(Estado.ELIMINADO);
+		h.setEstadoActividad(EstadoActividad.REALIZADA);
 		actividadRepository.deleteById(id);
 		actividadRepository.save(h);
 		return "Actividad borrada";
@@ -645,6 +632,46 @@ public class SisActivaApplicationController {
 	public String obtenerAsistencia(@PathVariable Long id) {
 		return JsonManager.toJson(asistencia1Repository.findById(id));
 	}
+	
+//	@RequestMapping(value = "/totalAsistenciaMes", method = RequestMethod.GET)
+//	public @ResponseBody List<Integer> obtenertotalAsistenciaMes() {	
+//		List<Integer> aux = new ArrayList<>();	
+////		for (int i = 0; i < 7; i++) {		
+//			Date d1 = new Date(System.currentTimeMillis());
+//			d1.setMonth(d1.getMonth()-i);
+//			d1.setDate(1);
+//			String diaInicial = d1+"";
+//			Date d2 = new Date(System.currentTimeMillis());
+//			d2.setMonth(d2.getMonth()-i+1);
+//			d2.setDate(1);	
+//			String diaFinal = d2+"";
+////			List<Actividad> m = actividadRepository.getrActividaFecha(diaInicial, diaFinal);
+//			List<Actividad> m = asistencia1Repository.getrActividaFecha(diaInicial, diaFinal);
+//			aux.add(m.size());
+////		}
+//		return aux;		
+//	}
+	
+	
+	
+//	@RequestMapping(value = "/totalActividadesUltimosMeses", method = RequestMethod.GET)
+//	public @ResponseBody List<Integer> obtenerActividaFecha1() {	
+//		List<Integer> aux = new ArrayList<>();	
+//		for (int i = 0; i < 7; i++) {		
+//			Date d1 = new Date(System.currentTimeMillis());
+//			d1.setMonth(d1.getMonth()-i);
+//			d1.setDate(1);
+//			String diaInicial = d1+"";
+//			Date d2 = new Date(System.currentTimeMillis());
+//			d2.setMonth(d2.getMonth()-i+1);
+//			d2.setDate(1);	
+//			String diaFinal = d2+"";
+//			List<Actividad> m = actividadRepository.getrActividaFecha(diaInicial, diaFinal);
+//			aux.add(m.size());
+//		}
+//		return aux;		
+//	}
+	
 
 	/**
 	 * Servicio que registra y agrega a la base de datos una narracion
