@@ -23,7 +23,7 @@ public interface ActividadRepository extends CrudRepository<Actividad, Long>{
 	@Query("SELECT a FROM Actividad a WHERE a.estado =  com.sis.models.entity.Estado.ELIMINADO")
 	List<Actividad> getByEstadoEliminado();
 	
-	@Query("SELECT a FROM Actividad a WHERE a.estadoActividad =  com.sis.models.entity.EstadoActividad.REALIZADA")
+	@Query("SELECT a FROM Actividad a WHERE a.estadoActividad =  com.sis.models.entity.EstadoActividad.REALIZADA AND  a.estado =  com.sis.models.entity.Estado.ACTIVO")
 	List<Actividad> getByEstadoRealizadas();
 
 	@Query("SELECT a FROM Actividad a WHERE a.estadoActividad =  com.sis.models.entity.EstadoActividad.SINREALIZAR AND a.estado =  com.sis.models.entity.Estado.ACTIVO")
