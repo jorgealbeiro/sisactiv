@@ -34,6 +34,19 @@ public interface ActividadRepository extends CrudRepository<Actividad, Long>{
 
 	@Query("SELECT a FROM Actividad a WHERE a.estadoActividad =  com.sis.models.entity.EstadoActividad.SINREALIZAR AND a.estado =  com.sis.models.entity.Estado.ELIMINADO")
 	List<Actividad> getByEstadoSinRealizarEliminadas();
+
+	@Query(value = "SELECT * from Actividad a "			
+			+ "WHERE a.fecha < (:diaFinal) AND a.fecha >= (:diaInicial)", nativeQuery = true)
+	Collection<Object> filterHorario(String diaInicial, String diaFinal);
+	
+
+	@Query(value = "SELECT * from Actividad a "			
+			+ "WHERE a.fecha < (:diaFinal) AND a.fecha >= (:diaInicial)", nativeQuery = true)
+	List<Actividad> getrActividaFecha(String diaInicial, String diaFinal);
+	
+	
+	
+	
 	
 	
 //	@Query("SELECT * FROM Actividad a WHERE a.fecha <= :fecha)")

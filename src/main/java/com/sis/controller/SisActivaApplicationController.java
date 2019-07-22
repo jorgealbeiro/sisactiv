@@ -2,6 +2,7 @@ package com.sis.controller;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -58,6 +59,7 @@ public class SisActivaApplicationController {
 	@Autowired
 	private Asistencia1Repository asistencia1Repository;
 
+	
 	/**
 	 * Servicio que obtiene lista de personas 
 	 * @return
@@ -75,6 +77,7 @@ public class SisActivaApplicationController {
 	 * metodo que obtiene a todas las personas activas
 	 */
 	@RequestMapping(value = "/obtenerPersonasActivas", method = RequestMethod.GET)
+	
 	public @ResponseBody List<Persona> obtenerPersonas() {
 		return personaRepository.getByEstadoActivos();
 	}
@@ -232,6 +235,56 @@ public class SisActivaApplicationController {
 	public @ResponseBody List<Actividad> obtenerActividadesColaborador(@PathVariable long id) {
 		return actividadRepository.getActividadesColaborador(id);
 	}
+	
+	@RequestMapping(value = "/ActividaFecha/{diaInicial}/{diaFinal}", method = RequestMethod.GET)
+	public @ResponseBody List<Actividad> obtenerActividaFecha(@PathVariable String diaInicial, @PathVariable String diaFinal) {	
+		return actividadRepository.getrActividaFecha(diaInicial, diaFinal);		
+	}
+	
+	@RequestMapping(value = "/ActividaFecha1", method = RequestMethod.GET)
+	public @ResponseBody List<Integer> obtenerActividaFecha1() {	
+		List<Integer> aux = new ArrayList<>();	
+		for (int i = 0; i < 7; i++) {		
+			Date d1 = new Date(System.currentTimeMillis());
+			d1.setMonth(d1.getMonth()-i);
+			d1.setDate(1);
+			String diaInicial = d1+"";
+			Date d2 = new Date(System.currentTimeMillis());
+			d2.setMonth(d2.getMonth()-i+1);
+			d2.setDate(1);	
+			String diaFinal = d2+"";
+			List<Actividad> m = actividadRepository.getrActividaFecha(diaInicial, diaFinal);
+			aux.add(m.size());
+		}
+		return aux;
+		
+	}
+	
+	@RequestMapping(value = "/ActividaFechas", method = RequestMethod.GET)
+	public @ResponseBody List<Actividad> fechas1() {
+		int i = 0;
+//		for (int i = 1; i < 7; i++) {
+			Date d1 = new Date(System.currentTimeMillis());
+			d1.setMonth(d1.getMonth()-i);
+			d1.setDate(1);
+			Date d2 = new Date(System.currentTimeMillis());
+			d2.setMonth(d2.getMonth()-i+1);
+			d2.setDate(1);		
+			System.out.println(d1+"ffffffffffffffffffffffffffff");
+			System.out.println(d2 + "jjjjjjjjjjjjjjjjjjjjjjjjjjj");
+//			List<Actividad> aux = actividadRepository.getrActividaFecha(d1+"", d2+"");
+			return actividadRepository.getrActividaFecha(d1+"", d2+"");
+//		}
+	}
+	
+	
+	@RequestMapping(value = "/horario/filtro/{diaInicial}/{diaFinal}", method = RequestMethod.GET)
+	public String getHorariosFiltrados(@PathVariable String diaInicial, @PathVariable String diaFinal) {
+		Date d = new Date(System.currentTimeMillis());
+		
+		return JsonManager.toJson(actividadRepository.filterHorario(diaInicial, diaFinal));
+	}
+	
 
 	/**
 	 * Servicio que registra y agrega a la base de datos una actividad
