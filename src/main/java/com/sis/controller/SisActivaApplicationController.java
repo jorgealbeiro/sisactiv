@@ -500,6 +500,17 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(narracionRepository.findAll());
 	}
 	
+	@RequestMapping(value = "/obtenerNarracionesList", method = RequestMethod.GET)
+	public @ResponseBody List<Narracion> obtenerCantidadNarracionesList() {
+		return (List<Narracion>) narracionRepository.findAll();
+	}
+	
+	@RequestMapping(value = "/obtenerCantidadNarraciones", method = RequestMethod.GET)
+	public @ResponseBody int obtenerCantidadNarraciones() {
+		List<Narracion> m = (List<Narracion>) narracionRepository.findAll();
+		return m.size();
+	}
+	
 	/**
 	 * Metodo que obtiene las narraciones de un colaborador en especifico 
 	 * @param id
