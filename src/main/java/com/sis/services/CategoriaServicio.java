@@ -1,5 +1,6 @@
 package com.sis.services;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sis.models.entity.CategoriaActividad;
+import com.sis.models.entity.Profesion;
 import com.sis.persistence.JsonManager;
 import com.sis.repository.CategoriaRepository;
 
@@ -60,13 +62,25 @@ public class CategoriaServicio {
 
 	@RequestMapping(value = "/borrarCategoria/{id}", method = RequestMethod.DELETE)
 	public String borrarCategoria(@PathVariable int id) {
-		categoriaRepository.deleteById(id);
-		return "Borrado";
+		CategoriaActividad ca = categoriaRepository.findById(id).get();
+		Collection<Object> aux = categoriaRepository.obtenerActividades(id);
+		if (aux.size() > 0) {
+			return "la categoria esta asignada a : " + JsonManager.toJson(aux);
+		} else {
+			categoriaRepository.deleteById(id);
+			return "Categoria: " + ca.getNombre() + ", borrada";
+		}
+
 	}
 
 	@RequestMapping(value = "/editarCategoria/{id}", method = RequestMethod.PUT)
 	public String editarVereda(@Valid @RequestBody CategoriaActividad vereda) {
 		return JsonManager.toJson(categoriaRepository.save(vereda));
 	}
+	
+//	@RequestMapping(value = "/obtenerPersonasPorCategoria/{id}", method = RequestMethod.GET)
+//	public String obtenerPersonasPorCategoria(@PathVariable long id) {
+//		return JsonManager.toJson(categoriaRepository.obtenerPersonasPorCategoria(id));
+//	}
 
 }

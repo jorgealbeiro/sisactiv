@@ -31,6 +31,7 @@ import com.sis.models.entity.EstadoActividad;
 import com.sis.models.entity.EstadoAfiliacion;
 import com.sis.models.entity.Narracion;
 import com.sis.models.entity.Persona;
+import com.sis.models.entity.Profesion;
 import com.sis.persistence.JsonManager;
 import com.sis.reports.Reports;
 import com.sis.repository.ActividadRepository;
@@ -67,10 +68,10 @@ public class SisActivaApplicationController {
 	 */
 	@RequestMapping(value = "/obtenerPersonas", method = RequestMethod.GET)
 	public String obtenerListaPersonas() {
-		if (vez < 1) {
-			SerialComm.getInstance().initialize();
-			vez++;
-		}
+//		if (vez < 1) {
+//			SerialComm.getInstance().initialize();
+//			vez++;
+//		}
 		return JsonManager.toJson(personaRepository.findAll());
 	}
 
@@ -334,23 +335,6 @@ public class SisActivaApplicationController {
 		return "Usuario no existe";
 	}
 
-//	@RequestMapping(value = "/obtenerActividades1", method = RequestMethod.GET)
-//	public ResponseEntity<ByteArrayResource> generarProgresos(@PathVariable Long id) {
-//		byte[] array;
-//		try {
-//			array = Reports.generarProgresosPDF(actividadRepository.findAll().get());
-//			ByteArrayResource resource = new ByteArrayResource(array);
-//			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=reporte.pdf")
-//					.contentType(MediaType.APPLICATION_PDF) //
-//					.contentLength(array.length) //
-//					.body(resource);
-//
-//		} catch (ParseException | ClassNotFoundException | IOException | JRException e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-
 	// ------------------------------ADULTO
 	// MAYOR--------------------------------------------------
 	/**
@@ -464,6 +448,7 @@ public class SisActivaApplicationController {
 
 	/**
 	 * metodo para agregar manilla
+	 * 
 	 * @param cedula
 	 * @return
 	 */
@@ -484,7 +469,8 @@ public class SisActivaApplicationController {
 	}
 
 	/**
-	 * metodo que edita la manilla de un adulto 
+	 * metodo que edita la manilla de un adulto
+	 * 
 	 * @param cedula
 	 * @return
 	 */
@@ -671,43 +657,6 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(asistencia1Repository.findById(id));
 	}
 
-//	@RequestMapping(value = "/totalAsistenciaMes", method = RequestMethod.GET)
-//	public @ResponseBody List<Integer> obtenertotalAsistenciaMes() {	
-//		List<Integer> aux = new ArrayList<>();	
-////		for (int i = 0; i < 7; i++) {		
-//			Date d1 = new Date(System.currentTimeMillis());
-//			d1.setMonth(d1.getMonth()-i);
-//			d1.setDate(1);
-//			String diaInicial = d1+"";
-//			Date d2 = new Date(System.currentTimeMillis());
-//			d2.setMonth(d2.getMonth()-i+1);
-//			d2.setDate(1);	
-//			String diaFinal = d2+"";
-////			List<Actividad> m = actividadRepository.getrActividaFecha(diaInicial, diaFinal);
-//			List<Actividad> m = asistencia1Repository.getrActividaFecha(diaInicial, diaFinal);
-//			aux.add(m.size());
-////		}
-//		return aux;		
-//	}
-
-//	@RequestMapping(value = "/totalActividadesUltimosMeses", method = RequestMethod.GET)
-//	public @ResponseBody List<Integer> obtenerActividaFecha1() {	
-//		List<Integer> aux = new ArrayList<>();	
-//		for (int i = 0; i < 7; i++) {		
-//			Date d1 = new Date(System.currentTimeMillis());
-//			d1.setMonth(d1.getMonth()-i);
-//			d1.setDate(1);
-//			String diaInicial = d1+"";
-//			Date d2 = new Date(System.currentTimeMillis());
-//			d2.setMonth(d2.getMonth()-i+1);
-//			d2.setDate(1);	
-//			String diaFinal = d2+"";
-//			List<Actividad> m = actividadRepository.getrActividaFecha(diaInicial, diaFinal);
-//			aux.add(m.size());
-//		}
-//		return aux;		
-//	}
-
 	/**
 	 * Servicio que registra y agrega a la base de datos una narracion
 	 * 
@@ -758,4 +707,13 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(asistencia1Repository.save(asistencia1));
 	}
 
+	@RequestMapping(value = "/obtenerPersonasPorCategoria", method = RequestMethod.GET)
+	public String obtenerPersonasPorCategoria() {
+		return JsonManager.toJson(asistencia1Repository.obtenerPersonas());
+	}
+
+	@RequestMapping(value = "/obtenerPersonasPorCategoria1", method = RequestMethod.GET)
+	public String obtenerPersonasPorCategoria1() {
+		return JsonManager.toJson(asistencia1Repository.obtenerPersonas1());
+	}
 }

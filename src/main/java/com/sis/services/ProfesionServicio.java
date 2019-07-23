@@ -1,5 +1,6 @@
 package com.sis.services;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sis.models.entity.Actividad;
@@ -20,27 +22,30 @@ import com.sis.repository.ProfesionRepository;
 
 /**
  * Clase que contiene los servicios de profesion
+ * 
  * @author Yuliana Boyaca
  *
  */
-@CrossOrigin(origins= {"http://localhost:4200"})
+@CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
 public class ProfesionServicio {
 
 	@Autowired
 	private ProfesionRepository profesionRepository;
-	
+
 	/**
 	 * Servicio que obtiene lista de profesiones
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/obtenerProfesiones", method = RequestMethod.GET)
 	public String obtenerProfesiones() {
 		return JsonManager.toJson(profesionRepository.findAll());
 	}
-	
+
 	/**
 	 * Servicio que registra y agrega a la base de datos una profesion
+	 * 
 	 * @param p
 	 * @return
 	 */
@@ -49,7 +54,7 @@ public class ProfesionServicio {
 		profesionRepository.save(profesion);
 		return "Guardado";
 	}
-	
+
 	@RequestMapping(value = "/obtenerProfesion/{id}", method = RequestMethod.GET)
 	public String obtenerProfesion(@PathVariable int id) {
 		return JsonManager.toJson(profesionRepository.findById(id));
@@ -57,14 +62,20 @@ public class ProfesionServicio {
 
 	@RequestMapping(value = "/borrarProfesion/{id}", method = RequestMethod.DELETE)
 	public String borrarProfesion(@PathVariable int id) {
-		List<String> mas = profesionRepository.obtenerPersonaslis(id);
-//		profesionRepository.deleteById(id);
-		return "Borrado"+ mas.size()+ "  "+ mas.get(0) ;
+		Profesion p = profesionRepository.findById(id).get();
+		Collection<Object> aux = profesionRepository.obtenerPersonas(id);
+		if (aux.size() > 0) {
+			return "la profesion esta asignada a : " + JsonManager.toJson(aux);
+		} else {
+			profesionRepository.deleteById(id);
+			return "Profesion: " + p.getNombre() + ", borrada";
+		}
+
 	}
 
 	@RequestMapping(value = "/editarProfesion", method = RequestMethod.PUT)
 	public String editarProfesion(@Valid @RequestBody Profesion profesion) {
 		return JsonManager.toJson(profesionRepository.save(profesion));
 	}
-	
+
 }

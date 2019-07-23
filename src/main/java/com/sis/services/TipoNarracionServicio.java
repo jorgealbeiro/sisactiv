@@ -1,5 +1,7 @@
 package com.sis.services;
 
+import java.util.Collection;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sis.models.entity.Profesion;
 import com.sis.models.entity.TipoNarracion;
 import com.sis.persistence.JsonManager;
 import com.sis.repository.TipoNarracionRepository;
@@ -18,9 +21,10 @@ public class TipoNarracionServicio {
 
 	@Autowired
 	private TipoNarracionRepository tipoNarracionRepository;
-	
+
 	/**
-	 * Agregar un nuevo tipo de narracion 
+	 * Agregar un nuevo tipo de narracion
+	 * 
 	 * @param p
 	 * @return
 	 */
@@ -29,22 +33,23 @@ public class TipoNarracionServicio {
 		tipoNarracionRepository.save(p);
 		return "Guardado";
 	}
-	
-	
+
 	/**
 	 * Servicio que obtiene lista de todos los tipos de narraciones
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/obtenerTiposNarraciones", method = RequestMethod.GET)
 	public String getVereda() {
 		return JsonManager.toJson(tipoNarracionRepository.findAll());
 	}
-	
+
 	/**
 	 * Servicio que obtiene un tipo de narracion de acuerdo al id ingresado
+	 * 
 	 * @param id
 	 * @return
-	 */	
+	 */
 	@RequestMapping(value = "/obtenerTipoNarracion/{id}", method = RequestMethod.GET)
 	public String obtenerTipoNarracion(@PathVariable long id) {
 		return JsonManager.toJson(tipoNarracionRepository.findById(id));
@@ -52,12 +57,21 @@ public class TipoNarracionServicio {
 
 	@RequestMapping(value = "/borrarTipoNarracion/{id}", method = RequestMethod.DELETE)
 	public String borrarTipoNarracion(@PathVariable long id) {
-		tipoNarracionRepository.deleteById(id);
-		return "Borrado";
+		TipoNarracion p = tipoNarracionRepository.findById(id).get();
+		Collection<Object> aux = tipoNarracionRepository.obtenerNarraciones(id);
+		if (aux.size() > 0) {
+			return "El tipo de narracion esta asignada a : " + JsonManager.toJson(aux);
+		} else {
+			tipoNarracionRepository.deleteById(id);
+			return "Tipo de narracion: " + p.getNombre() + ", borrada";
+		}
+
 	}
 
 	@RequestMapping(value = "/editarTipoNarracion", method = RequestMethod.PUT)
 	public String editarTipoNarracion(@Valid @RequestBody TipoNarracion tipoNarracion) {
 		return JsonManager.toJson(tipoNarracionRepository.save(tipoNarracion));
 	}
+	
+	
 }
