@@ -461,6 +461,7 @@ public class SisActivaApplicationController {
 	public String agregarManilla(@PathVariable("cedula") Long cedula) {
 		AdultoMayor auxx = adultoMayorRepository.findById(cedula).get();
 		if (auxx.getManilla().equals("no tiene")) {
+			if(!SerialComm.getInstance().manilla.equals("no detecto manilla")) {
 			AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
 			if (admv == null) {
 				auxx.setManilla(SerialComm.getInstance().manilla);
@@ -468,6 +469,9 @@ public class SisActivaApplicationController {
 				return " Manilla registrada a " + auxx.getNombre() + " con numero: " + SerialComm.getInstance().manilla;
 			} else {
 				return "Esta Manilla esta asignada a " + admv.getNombre();
+			}
+			}else {
+				return "Error, vuelva a registrar la manilla";
 			}
 		}
 		return auxx.getNombre() + " ya tiene manilla con " + auxx.getManilla();
@@ -486,7 +490,7 @@ public class SisActivaApplicationController {
 			AdultoMayor adm = adultoMayorRepository.findById(cedula).get();
 			adm.setManilla(SerialComm.getInstance().manilla);
 			adultoMayorRepository.save(adm);
-			return " Manilla registrada a " + adm.getNombre() + " con numero: " + SerialComm.getInstance().manilla;
+			return " Nueva manilla de " + adm.getNombre() + " con numero: " + SerialComm.getInstance().manilla;
 		} else {
 			return "Esta Manilla esta asignada a " + admv.getNombre();
 		}
