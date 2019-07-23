@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Asistencia1 {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "exception_seq_generator")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
 	private long id;
 
 	@ManyToOne // (fetch = FetchType.LAZY)

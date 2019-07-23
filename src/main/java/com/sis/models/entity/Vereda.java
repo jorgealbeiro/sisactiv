@@ -5,14 +5,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 
 @Entity
+
 public class Vereda {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "exception_seq_generator")
+	@SequenceGenerator(name="seq", initialValue=300, allocationSize=1000)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
 	private int idVereda;
 	@NotNull()
 	@Column(unique= true)

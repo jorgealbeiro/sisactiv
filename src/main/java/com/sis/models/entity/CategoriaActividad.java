@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 public class CategoriaActividad {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "exception_seq_generator")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
 	private int idCategoria;
 	@NotNull()
 	@Column(unique= true)

@@ -26,7 +26,7 @@ public class Actividad {
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "exception_seq_generator")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
 	private long id;
 	@ManyToOne
 	@JoinColumn(name="categoria_id", referencedColumnName = "idCategoria")

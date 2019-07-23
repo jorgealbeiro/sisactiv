@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Narracion {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "exception_seq_generator")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
 	private long idNarracion;
 	@ManyToOne
 	@JoinColumn(name="cedula_adulto", referencedColumnName = "cedula")

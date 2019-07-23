@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class Profesion {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "exception_seq_generator")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
 	private int idProfesion;
 	private String nombre;
 	
