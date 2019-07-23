@@ -674,10 +674,10 @@ public class SisActivaApplicationController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/registrarAsistencia/{act}/{mani}", method = RequestMethod.POST)
+	@RequestMapping(value = "/registrarAsistencia/{act}", method = RequestMethod.POST)
 	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1, @PathVariable("act") Long id,
 			@PathVariable("mani") String mani) {
-		AdultoMayor adultoMayor = adultoMayorRepository.obtenerAdultoManilla(mani);
+		AdultoMayor adultoMayor = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
 		asistencia1.setCedulaAdulto(adultoMayor);
 		Actividad a = actividadRepository.findById(id).get();
 		asistencia1.setIdActividad(a);
