@@ -68,7 +68,7 @@ public class SisActivaApplicationController {
 	public String obtenerListaPersonas() {
 		if (vez < 1) {
 			SerialComm.getInstance();
-		SerialComm.initialize();
+			SerialComm.initialize();
 			vez++;
 		}
 		return JsonManager.toJson(personaRepository.findAll());
@@ -122,6 +122,7 @@ public class SisActivaApplicationController {
 		if (vez < 1) {
 			SerialComm.getInstance();
 			SerialComm.initialize();
+			String s = SerialComm.getInstance().manilla;
 			vez++;
 		}
 		return "Usuario no existe";
@@ -459,7 +460,7 @@ public class SisActivaApplicationController {
 	@RequestMapping(value = "/agregarManilla/{cedula}", method = RequestMethod.GET)
 	public String agregarManilla(@PathVariable("cedula") Long cedula) {
 		AdultoMayor auxx = adultoMayorRepository.findById(cedula).get();
-		if (auxx.getManilla().equals("no tiene") ) {
+		if (auxx.getManilla().equals("no tiene")) {
 			AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
 			if (admv == null) {
 				auxx.setManilla(SerialComm.getInstance().manilla);
@@ -478,7 +479,7 @@ public class SisActivaApplicationController {
 	 * @param cedula
 	 * @return
 	 */
-	@RequestMapping(value = "/editarManilla/{cedula}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/editarManilla/{cedula}", method = RequestMethod.GET)
 	public String editarManilla(@PathVariable("cedula") Long cedula) {
 		AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
 		if (admv == null) {
@@ -504,7 +505,9 @@ public class SisActivaApplicationController {
 
 	@RequestMapping(value = "/obtenerManilla1", method = RequestMethod.GET)
 	public String obtenerManilla1() {
+		System.out.println(SerialComm.getInstance().manilla);
 		return SerialComm.getInstance().manilla;
+
 	}
 
 	// -----------------------------------------NARRACIONES--------------------------------------------
