@@ -35,7 +35,7 @@ public class AdultoMayor {
 	private Vereda vereda;
 	private long celular;
 	
-	@Column(unique= true)
+//	@Column(unique= true)
 	private String manilla;
 	
 	

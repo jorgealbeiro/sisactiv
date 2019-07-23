@@ -67,10 +67,10 @@ public class SisActivaApplicationController {
 	 */
 	@RequestMapping(value = "/obtenerPersonas", method = RequestMethod.GET)
 	public String obtenerListaPersonas() {
-//		if (vez < 1) {
-//			SerialComm.getInstance().initialize();
-//			vez++;
-//		}
+		if (vez < 1) {
+			SerialComm.getInstance().initialize();
+			vez++;
+		}
 		return JsonManager.toJson(personaRepository.findAll());
 	}
 
@@ -408,25 +408,24 @@ public class SisActivaApplicationController {
 		return adultoMayorRepository.getAdultoVereda(ve);
 	}
 
-	
 	/**
-	 * Servicio que registra y agrega a la base de datos un adulto mayor 
+	 * Servicio que registra y agrega a la base de datos un adulto mayor
+	 * 
 	 * @param p
 	 * @return
 	 */
 	@RequestMapping(value = "/registrarAdultoMayor", method = RequestMethod.POST)
 	public String registrarAdultoMayor(@Valid @RequestBody AdultoMayor adultoMayor) {
-		List<AdultoMayor> aux = adultoMayorRepository.obtenerAdultocc(adultoMayor.getCedula()); 
-		adultoMayorRepository.save(adultoMayor);
-		if (aux.size() > 0) {		
-			adultoMayorRepository.findById(adultoMayor.getCedula());
-			adultoMayorRepository.save(aux.get(0));
+		List<AdultoMayor> aux = adultoMayorRepository.obtenerAdultocc(adultoMayor.getCedula());
+		if (aux.size() > 0) {
 			return "Ya esta registrada esa identificacion";
-		} 
-		return "Guardado";		
+		} else {
+			adultoMayor.setManilla("no tiene");
+			adultoMayorRepository.save(adultoMayor);
+			return "Guardado";
+		}
 	}
 
-	
 	@RequestMapping(value = "/borrarAdulto/{id}", method = RequestMethod.DELETE)
 	public String borrarAdulto(@PathVariable Long id) {
 		adultoMayorRepository.deleteById(id);
@@ -447,14 +446,14 @@ public class SisActivaApplicationController {
 		adultoMayorRepository.save(a);
 		return "Borrado";
 	}
-	
+
 	@RequestMapping(value = "/desafiliarAdulto/{id}", method = RequestMethod.DELETE)
 	public String desafiliarAdulto(@PathVariable Long id) {
 		AdultoMayor a = adultoMayorRepository.findById(id).get();
 		a.setEstadoAfiliacion(EstadoAfiliacion.DESAFILIADO);
 		adultoMayorRepository.deleteById(id);
 		adultoMayorRepository.save(a);
-		return "Borrado";
+		return "DESAFILIADO";
 	}
 
 	@RequestMapping(value = "/editarAdulto/{cedula}", method = RequestMethod.PUT)
@@ -463,11 +462,34 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(adultoMayorRepository.save(adultoMayor));
 	}
 
-	
-	
-	
+	/**
+	 * metodo para agregar manilla
+	 * @param cedula
+	 * @return
+	 */
 	@RequestMapping(value = "/agregarManilla/{cedula}", method = RequestMethod.PUT)
-	public String agregarManilla(@Valid @RequestBody AdultoMayor adf, @PathVariable("cedula") Long cedula) {
+	public String agregarManilla(@PathVariable("cedula") Long cedula) {
+		AdultoMayor auxx = adultoMayorRepository.findById(cedula).get();
+		if (auxx.getManilla().equals("no tiene")) {
+			AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
+			if (admv == null) {
+				auxx.setManilla(SerialComm.getInstance().manilla);
+				adultoMayorRepository.save(auxx);
+				return " Manilla registrada a " + auxx.getNombre() + " con numero: " + SerialComm.getInstance().manilla;
+			} else {
+				return "Esta Manilla esta asignada a " + admv.getNombre();
+			}
+		}
+		return auxx.getNombre() + " ya tiene manilla con " + auxx.getManilla();
+	}
+
+	/**
+	 * metodo que edita la manilla de un adulto 
+	 * @param cedula
+	 * @return
+	 */
+	@RequestMapping(value = "/editarManilla/{cedula}", method = RequestMethod.PUT)
+	public String editarManilla(@PathVariable("cedula") Long cedula) {
 		AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
 		if (admv == null) {
 			AdultoMayor adm = adultoMayorRepository.findById(cedula).get();
@@ -475,8 +497,7 @@ public class SisActivaApplicationController {
 			adultoMayorRepository.save(adm);
 			return " Manilla registrada a " + adm.getNombre() + " con numero: " + SerialComm.getInstance().manilla;
 		} else {
-//			System.out.println(admv.getNombre());
-			return "Manilla asignada a   " + admv.getNombre();
+			return "Esta Manilla esta asignada a " + admv.getNombre();
 		}
 
 	}
@@ -489,6 +510,11 @@ public class SisActivaApplicationController {
 			idmanilla = SerialComm.getInstance().manilla;
 			return SerialComm.getInstance().manilla;
 		}
+	}
+
+	@RequestMapping(value = "/obtenerManilla1", method = RequestMethod.GET)
+	public String obtenerManilla1() {
+		return SerialComm.getInstance().manilla;
 	}
 
 	// -----------------------------------------NARRACIONES--------------------------------------------

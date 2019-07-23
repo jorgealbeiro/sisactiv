@@ -1,5 +1,7 @@
 package com.sis.services;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sis.models.entity.Actividad;
+import com.sis.models.entity.Persona;
 import com.sis.models.entity.Profesion;
 import com.sis.persistence.JsonManager;
 import com.sis.repository.ProfesionRepository;
@@ -53,8 +57,9 @@ public class ProfesionServicio {
 
 	@RequestMapping(value = "/borrarProfesion/{id}", method = RequestMethod.DELETE)
 	public String borrarProfesion(@PathVariable int id) {
-		profesionRepository.deleteById(id);
-		return "Borrado";
+		List<String> mas = profesionRepository.obtenerPersonaslis(id);
+//		profesionRepository.deleteById(id);
+		return "Borrado"+ mas.size()+ "  "+ mas.get(0) ;
 	}
 
 	@RequestMapping(value = "/editarProfesion", method = RequestMethod.PUT)
