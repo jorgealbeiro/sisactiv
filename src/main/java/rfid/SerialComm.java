@@ -1,107 +1,95 @@
 package rfid;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
-import java.awt.Component;
-import java.util.Enumeration;
-import javax.swing.JOptionPane;
+import com.panamahitek.ArduinoException;
+import com.panamahitek.PanamaHitek_Arduino;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 
-public class SerialComm implements SerialPortEventListener {
+/**
+ *
+ */
+public class SerialComm {
 
-	private static SerialComm sc =null; 
-	
+	private static final String PORT = "COM3";
+	private static final int DATA_RATE = 9600;
+	private PanamaHitek_Arduino panaArdu;
+
+	public String manilla = "no detecto manilla";
+
+	private static SerialComm sc = null;
+
 	public static SerialComm getInstance() {
-		if(sc==null) {
-			SerialComm.sc=new SerialComm();
+		if (sc == null) {
+			SerialComm.sc = new SerialComm();
 		}
 		return sc;
 	}
-	
+
 	private SerialComm() {
-		
+		this.panaArdu = new PanamaHitek_Arduino();
+		try {
+			this.panaArdu.arduinoRX(PORT, DATA_RATE, listener);
+		} catch (ArduinoException | SerialPortException ex) {
+			Logger.getLogger(SerialComm.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
-	
-	SerialPort serialPort;
 
-	public  String manilla = "no detecto manilla";
-	
-	private static final String PORT = "COM3";
+	SerialPortEventListener listener = new SerialPortEventListener() {
 
-	private BufferedReader input;
-
-	private OutputStream output;
-
-	private static final int TIME_OUT = 2000;
-
-	private static final int DATA_RATE = 9600;
-
-	public void initialize() {
-		System.setProperty("gnu.io.rxtx.SerialPorts", PORT);
-		CommPortIdentifier portId = null;
-		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-		while (portEnum.hasMoreElements()) {
-			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-			if (currPortId.getName().equals(PORT)) {
-				portId = currPortId;
-				break;
+		@Override
+		public void serialEvent(SerialPortEvent spe) {
+			try {
+				String inputLine = panaArdu.printMessage();
+				if (inputLine.startsWith("Card UID: ")) {
+//					System.out.println("input: " + inputLine.substring(10, 21));
+					manilla = inputLine.substring(10, 21);
+					System.out.println("manilla: "+manilla);
+				}
+			} catch (SerialPortException ex) {
+				Logger.getLogger(SerialComm.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (ArduinoException ex) {
+				Logger.getLogger(SerialComm.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-		System.out.println("holahola");
-		if (portId == null) {
-			Component frame = null;
-			JOptionPane.showMessageDialog(frame, "No se encontró el puerto");
+	};
+	
+	public static void initialize() {
+		new Thread(new Runnable() {
 
-			// System.out.println("No se encontró el puerto");
-			return;
-		}
-
-		try {
-			serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
-			serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE);
-			input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
-			output = serialPort.getOutputStream();
-
-			serialPort.addEventListener(this);
-			serialPort.notifyOnDataAvailable(true);
-		} catch (Exception e) {
-			System.err.println(e.toString());
-		}
-		System.out.println("holahola22");
-
-	}
-
-	public synchronized void close() {
-		if (serialPort != null) {
-			serialPort.removeEventListener();
-			serialPort.close();
-		}
-	}
-
-	public synchronized void serialEvent(SerialPortEvent oEvent) {
-		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-			try {
-				String inputLine = input.readLine();
-				System.out.println(inputLine);
-
-				System.out.println("nooooooooooooooooooooooooooo");
-				if (inputLine.startsWith("Card UID")) {
-					System.out.println("hollllllllllll..     " + inputLine.substring(10).trim());
-//						gui.cuid( inputLine.substring(10).trim() );
-					System.out.println(inputLine.substring(10).trim());
-					manilla = inputLine.substring(10).trim();
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				while (true) {
+//					System.out.println(SerialComm.getInstance().manilla);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 
-			} catch (Exception e) {
-				System.err.println(e.toString());
 			}
-		}
-
+		}).start();
 	}
 
+	
+
+	public static void main(String[] args) {
+		
+		
+		SerialComm.getInstance();
+		SerialComm.initialize();
+		
+		
+
+	}
 }

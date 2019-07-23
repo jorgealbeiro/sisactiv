@@ -68,10 +68,11 @@ public class SisActivaApplicationController {
 	 */
 	@RequestMapping(value = "/obtenerPersonas", method = RequestMethod.GET)
 	public String obtenerListaPersonas() {
-//		if (vez < 1) {
-//			SerialComm.getInstance().initialize();
-//			vez++;
-//		}
+		if (vez < 1) {
+			SerialComm.getInstance();
+		SerialComm.initialize();
+			vez++;
+		}
 		return JsonManager.toJson(personaRepository.findAll());
 	}
 
@@ -119,6 +120,11 @@ public class SisActivaApplicationController {
 		Collection<Persona> admin = personaRepository.autenticar(usuario, password);
 		if (admin.size() > 0) {
 			return JsonManager.toJson(admin);
+		}
+		if (vez < 1) {
+			SerialComm.getInstance();
+			SerialComm.initialize();
+			vez++;
 		}
 		return "Usuario no existe";
 
@@ -452,10 +458,10 @@ public class SisActivaApplicationController {
 	 * @param cedula
 	 * @return
 	 */
-	@RequestMapping(value = "/agregarManilla/{cedula}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/agregarManilla/{cedula}", method = RequestMethod.GET)
 	public String agregarManilla(@PathVariable("cedula") Long cedula) {
 		AdultoMayor auxx = adultoMayorRepository.findById(cedula).get();
-		if (auxx.getManilla().equals("no tiene")) {
+		if (auxx.getManilla().equals("no tiene") ) {
 			AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
 			if (admv == null) {
 				auxx.setManilla(SerialComm.getInstance().manilla);
