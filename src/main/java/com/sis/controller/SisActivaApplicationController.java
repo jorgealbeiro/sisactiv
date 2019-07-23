@@ -444,6 +444,16 @@ public class SisActivaApplicationController {
 		adultoMayorRepository.save(a);
 		return "DESAFILIADO";
 	}
+	
+
+	@RequestMapping(value = "/afiliarAdulto/{id}", method = RequestMethod.GET)
+	public String afiliarAdulto(@PathVariable Long id) {
+		AdultoMayor a = adultoMayorRepository.findById(id).get();
+		a.setEstadoAfiliacion(EstadoAfiliacion.ACTIVO);
+		adultoMayorRepository.deleteById(id);
+		adultoMayorRepository.save(a);
+		return "AFILIADO";
+	}
 
 	@RequestMapping(value = "/editarAdulto/{cedula}", method = RequestMethod.PUT)
 	public String editarAdulto(@Valid @RequestBody AdultoMayor adultoMayor, @PathVariable("cedula") Long cedula) {
