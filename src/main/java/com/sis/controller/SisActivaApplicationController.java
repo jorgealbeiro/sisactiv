@@ -33,14 +33,12 @@ import com.sis.models.entity.Narracion;
 import com.sis.models.entity.Persona;
 import com.sis.models.entity.Profesion;
 import com.sis.persistence.JsonManager;
-import com.sis.reports.Reports;
 import com.sis.repository.ActividadRepository;
 import com.sis.repository.AdultoMayorRepository;
 import com.sis.repository.Asistencia1Repository;
 import com.sis.repository.NarracionRepository;
 import com.sis.repository.PersonaRepository;
 
-import net.sf.jasperreports.engine.JRException;
 import rfid.SerialComm;
 
 @CrossOrigin(origins = { "http://localhost:4200", "http://192.168.0.28:4200" })
