@@ -684,25 +684,14 @@ public class SisActivaApplicationController {
 		asistencia1Repository.save(asistencia1);
 		return "Guardado";
 	}
+	
 
 	@RequestMapping(value = "/registrarAsistencia", method = RequestMethod.POST)
 	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1) {
 		asistencia1Repository.save(asistencia1);
 		return "Guardado";
 	}
-//
-//	/*
-//	 * Metodo para eliminar narracion, pero no de la base de datos
-//	 */
-//	@RequestMapping(value = "/borrarAsistencia/{id}", method = RequestMethod.DELETE)
-//	public String borrarAsistencia(@PathVariable Long id) {
-//		Narracion aux = narracionRepository.findById(id).get();
-//		aux.setEstado(Estado.ELIMINADO);		
-//		narracionRepository.deleteById(id);
-//		narracionRepository.save(aux);
-//		return "Narracion Borrada";
-//	}
-//	
+
 
 	@RequestMapping(value = "/editarAsistencia", method = RequestMethod.PUT)
 	public String editarAsistencia(@Valid @RequestBody Asistencia1 narracion) {
