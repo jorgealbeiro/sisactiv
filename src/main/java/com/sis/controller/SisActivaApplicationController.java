@@ -317,6 +317,15 @@ public class SisActivaApplicationController {
 		return "Actividad borrada";
 	}
 
+	@RequestMapping(value = "/realizarActividad/{id}", method = RequestMethod.GET)
+	public String realizarActividad(@PathVariable Long id) {
+		Actividad h = actividadRepository.findById(id).get();
+		h.setEstadoActividad(EstadoActividad.REALIZADA);
+		actividadRepository.save(h);
+		return "Actividad Finalizada";
+	}
+	
+	
 	@RequestMapping(value = "/editarActividad/{cedula}", method = RequestMethod.PUT)
 	public String editarActividad(@Valid @RequestBody Actividad actividad, @PathVariable("cedula") Long cedulaPersona) {
 		System.out.println("A editar" + JsonManager.toJson(actividad));
