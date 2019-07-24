@@ -51,6 +51,11 @@ public interface Asistencia1Repository extends CrudRepository<Asistencia1, Long>
 	@Query(value = "select categoria_actividad.nombre from categoria_actividad", nativeQuery = true)
 	List<String> obtenerlistaCategorias1();
 
+	@Query(value = "SELECT categoria_actividad.nombre as nombreCategoria ,adulto_mayor.nombre, adulto_mayor.apellido,  adulto_mayor.genero from  categoria_actividad join actividad on categoria_actividad.id_categoria=actividad.categoria_id " + 
+			"			join asistencia1 on actividad.id=asistencia1.id_actividad join adulto_mayor on asistencia1.cedula_adulto=adulto_mayor.cedula " + 
+			"            where categoria_actividad.id_categoria =(:id) ", nativeQuery = true)
+	List<Object> obtenerPersonasPorCategoriaId(int id);
+
 	
 
 }
