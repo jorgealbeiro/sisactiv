@@ -51,4 +51,9 @@ public interface Asistencia1Repository extends CrudRepository<Asistencia1, Long>
 			+ "            where categoria_actividad.id_categoria =(:id) ", nativeQuery = true)
 	List<Object> obtenerPersonasPorCategoriaId(int id);
 
+	@Query(value = "SELECT categoria_actividad.nombre, actividad.presupuesto  from "
+			+ "categoria_actividad join actividad on categoria_actividad.id_categoria=actividad.categoria_id "
+			+ "  where categoria_actividad.id_categoria =(:id) ", nativeQuery = true)
+	List<Object> obtenerPresupuestoPorCategoriaid(int id);
+
 }
