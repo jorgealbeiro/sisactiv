@@ -23,6 +23,7 @@ import com.sis.models.entity.Asistencia1;
 import com.sis.models.entity.Estado;
 import com.sis.models.entity.EstadoActividad;
 import com.sis.models.entity.EstadoAfiliacion;
+import com.sis.models.entity.NaCaAd;
 import com.sis.models.entity.Narracion;
 import com.sis.models.entity.Persona;
 import com.sis.models.entity.Profesion;
@@ -694,7 +695,6 @@ public class SisActivaApplicationController {
 		}
 	}
 
-
 	@RequestMapping(value = "/registrarAsistencia", method = RequestMethod.POST)
 	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1) {
 		asistencia1Repository.save(asistencia1);
@@ -716,8 +716,16 @@ public class SisActivaApplicationController {
 	}
 
 	@RequestMapping(value = "/obtenerPersonasPorCategoria", method = RequestMethod.GET)
-	public String obtenerPersonasPorCategoria() {
-		return JsonManager.toJson(asistencia1Repository.obtenerPersonas());
+	public @ResponseBody List<NaCaAd> obtenerPersonasPorCategoria() {
+		List<NaCaAd> listna = new ArrayList<>();
+		List<Integer> ll = asistencia1Repository.obtenerlistaCategorias();
+		List<String> l2 = asistencia1Repository.obtenerlistaCategorias1();
+		for (int i = 0; i < ll.size(); i++) {
+			Collection<Object> vv = asistencia1Repository.obtenerPersonas(ll.get(i));
+			listna.add(new NaCaAd(l2.get(i), vv.size()));
+		}
+		
+		return listna;
 	}
 
 	@RequestMapping(value = "/obtenerPersonasPorActividad/{id}", method = RequestMethod.GET)
