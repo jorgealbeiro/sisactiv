@@ -721,8 +721,8 @@ public class SisActivaApplicationController {
 	}
 
 	@RequestMapping(value = "/obtenerPersonasPorActividad/{id}", method = RequestMethod.GET)
-	public String obtenerPersonasPorActividad(@PathVariable("id") long id) {
-		return JsonManager.toJson(asistencia1Repository.obtenerPersonasPorActividad(id));
+	public @ResponseBody List<AdultoMayor> obtenerPersonasPorActividad(@PathVariable("id") long id) {
+		return asistencia1Repository.obtenerPersonasPorActividad(id);
 	}
 
 	@RequestMapping(value = "/obtenerPersonasPorActividad1/{id}", method = RequestMethod.GET)

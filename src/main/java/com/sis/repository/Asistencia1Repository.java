@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import com.sis.models.entity.AdultoMayor;
 import com.sis.models.entity.Asistencia1;
 
 @Repository
@@ -25,11 +27,12 @@ public interface Asistencia1Repository extends CrudRepository<Asistencia1, Long>
 			+ "join asistencia1 on actividad.id=asistencia1.id_actividad join adulto_mayor on asistencia1.cedula_adulto=adulto_mayor.cedula", nativeQuery = true)
 	Collection<Object> obtenerPersonas();
 
-	@Query(value = "SELECT asi.id, asi.cedula_adulto from actividad ac join asistencia1 asi on ac.id=asi.id_actividad "
+	@Query(value = "SELECT adm from actividad ac join asistencia1 asi on ac.id=asi.id_actividad "
+			+"join adulto_mayor adm on asi.cedula_adulto=adm.cedula "
 			+ "WHERE ac.id = (:id)", nativeQuery = true)
-	Collection<Object> obtenerPersonasPorActividad(long id);
+	List<AdultoMayor> obtenerPersonasPorActividad(long id);
 	
-	@Query(value = "SELECT adm.nombre, adm.apellido, adm.cedula, ver.nombre AS nombreVereda from actividad ac join asistencia1 asi on ac.id=asi.id_actividad "
+	@Query(value = "SELECT adm.nombre, adm.apellido, adm.cedula, adm.celular, ver.nombre AS nombreVereda from actividad ac join asistencia1 asi on ac.id=asi.id_actividad "
 			+"join adulto_mayor adm on asi.cedula_adulto=adm.cedula join vereda ver  on adm.vereda_id=ver.id_vereda "
 			+ "WHERE ac.id = (:id)", nativeQuery = true)
 	Collection<Object> obtenerPersonasPorActividad1(long id);
