@@ -690,7 +690,8 @@ public class SisActivaApplicationController {
 	@RequestMapping(value = "/registrarAsistencia/{act}", method = RequestMethod.POST)
 	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1, @PathVariable("act") Long id) {
 		AdultoMayor adultoMayor = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
-		if (adultoMayor != null) {
+		Collection<AdultoMayor> da = adultoMayorRepository.obtenerAdultosMayores(SerialComm.getInstance().manilla);
+		if (da.size() > 0) {
 			Collection<Asistencia1> asis = asistencia1Repository.validarasistencia(id, adultoMayor.getCedula());
 			if (asis.size() > 0) {
 				return adultoMayor.getNombre() + " ya se registro a la actividad";
@@ -701,7 +702,7 @@ public class SisActivaApplicationController {
 				asistencia1Repository.save(asistencia1);
 				return "Asistencia registrada";
 			}
-		}else {
+		} else {
 			return "Manilla no registrada en el sistema";
 		}
 

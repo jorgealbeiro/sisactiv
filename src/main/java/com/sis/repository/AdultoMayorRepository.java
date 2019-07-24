@@ -1,5 +1,6 @@
 package com.sis.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -31,5 +32,9 @@ public interface AdultoMayorRepository extends CrudRepository<AdultoMayor, Long>
 
 	@Query(value = "select * from adulto_mayor a WHERE a.cedula = ?1 ", nativeQuery = true)	
 	List<AdultoMayor> obtenerAdultocc(long cedula);
+	
+
+	@Query(value = "SELECT * FROM adulto_mayor adu WHERE adu.manilla =(:manilla)", nativeQuery = true)
+	Collection<AdultoMayor> obtenerAdultosMayores(String manilla);
 
 }
