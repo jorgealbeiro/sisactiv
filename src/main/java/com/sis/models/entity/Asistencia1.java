@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Asistencia1 {
 
 	@Id
+	@SequenceGenerator(name="seq", initialValue=800, allocationSize=1000)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
 	private long id;
 

@@ -5,12 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 @Entity
 public class TipoNarracion {
 
 	@Id
+	@SequenceGenerator(name="seq", initialValue=400, allocationSize=1000)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq")
 	private long idTipoNarracion;
 	@NotNull

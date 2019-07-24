@@ -742,14 +742,9 @@ public class SisActivaApplicationController {
 	}
 
 	@RequestMapping(value = "/obtenerPersonasPorCategoriaid/{id}", method = RequestMethod.GET)
-	public @ResponseBody List<Object> obtenerPersonasPorCategoriaid(@PathVariable("id") int id) {		
-			return asistencia1Repository.obtenerPersonasPorCategoriaId(id);
-					
-	}
+	public @ResponseBody List<Object> obtenerPersonasPorCategoriaid(@PathVariable("id") int id) {
+		return asistencia1Repository.obtenerPersonasPorCategoriaId(id);
 
-	@RequestMapping(value = "/obtenerPersonasPorActividad/{id}", method = RequestMethod.GET)
-	public @ResponseBody List<AdultoMayor> obtenerPersonasPorActividad(@PathVariable("id") long id) {
-		return asistencia1Repository.obtenerPersonasPorActividad(id);
 	}
 
 	@RequestMapping(value = "/obtenerPersonasPorActividad1/{id}", method = RequestMethod.GET)
