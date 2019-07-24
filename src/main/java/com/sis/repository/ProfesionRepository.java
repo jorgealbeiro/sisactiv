@@ -19,8 +19,6 @@ public interface ProfesionRepository extends CrudRepository<Profesion, Integer> 
 	@Query(value = "SELECT pe.nombre, pe.apellido from "
 			+ "profesion pr join persona pe on pr.id_profesion=pe.profesion_id "			
 			+ "WHERE pr.id_profesion = (:id)", nativeQuery = true)
-	Collection<Object> obtenerPersonas(int id);
-	
-	
+	Collection<Object> obtenerPersonas(int id);	
 
 }

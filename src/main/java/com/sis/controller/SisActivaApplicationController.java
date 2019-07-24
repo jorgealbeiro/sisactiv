@@ -1,6 +1,5 @@
 package com.sis.controller;
 
-import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,12 +8,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.expression.ParseException;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -444,7 +438,6 @@ public class SisActivaApplicationController {
 		adultoMayorRepository.save(a);
 		return "DESAFILIADO";
 	}
-	
 
 	@RequestMapping(value = "/afiliarAdulto/{id}", method = RequestMethod.GET)
 	public String afiliarAdulto(@PathVariable Long id) {
@@ -471,16 +464,17 @@ public class SisActivaApplicationController {
 	public String agregarManilla(@PathVariable("cedula") Long cedula) {
 		AdultoMayor auxx = adultoMayorRepository.findById(cedula).get();
 		if (auxx.getManilla().equals("no tiene")) {
-			if(!SerialComm.getInstance().manilla.equals("no detecto manilla")) {
-			AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
-			if (admv == null) {
-				auxx.setManilla(SerialComm.getInstance().manilla);
-				adultoMayorRepository.save(auxx);
-				return " Manilla registrada a " + auxx.getNombre() + " con numero: " + SerialComm.getInstance().manilla;
+			if (!SerialComm.getInstance().manilla.equals("no detecto manilla")) {
+				AdultoMayor admv = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
+				if (admv == null) {
+					auxx.setManilla(SerialComm.getInstance().manilla);
+					adultoMayorRepository.save(auxx);
+					return " Manilla registrada a " + auxx.getNombre() + " con numero: "
+							+ SerialComm.getInstance().manilla;
+				} else {
+					return "Esta Manilla esta asignada a " + admv.getNombre();
+				}
 			} else {
-				return "Esta Manilla esta asignada a " + admv.getNombre();
-			}
-			}else {
 				return "Error, vuelva a registrar la manilla";
 			}
 		}
@@ -685,23 +679,27 @@ public class SisActivaApplicationController {
 	 * @return
 	 */
 	@RequestMapping(value = "/registrarAsistencia/{act}", method = RequestMethod.POST)
-	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1, @PathVariable("act") Long id,
-			@PathVariable("mani") String mani) {
+	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1, @PathVariable("act") Long id) {
 		AdultoMayor adultoMayor = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
-		asistencia1.setCedulaAdulto(adultoMayor);
-		Actividad a = actividadRepository.findById(id).get();
-		asistencia1.setIdActividad(a);
-		asistencia1Repository.save(asistencia1);
-		return "Guardado";
+//		AdultoMayor adultoMayor = adultoMayorRepository.obtenerAdultoManilla("AB 1C D0 34");
+		Collection<Asistencia1> asis = asistencia1Repository.validarasistencia(id, adultoMayor.getCedula());
+		if (asis.size() > 0) {
+			return adultoMayor.getNombre() + " ya se registro a la actividad";
+		} else {
+			asistencia1.setCedulaAdulto(adultoMayor);
+			Actividad a = actividadRepository.findById(id).get();
+			asistencia1.setIdActividad(a);
+			asistencia1Repository.save(asistencia1);
+			return "Asistencia registrada";
+		}
 	}
-	
+
 
 	@RequestMapping(value = "/registrarAsistencia", method = RequestMethod.POST)
 	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1) {
 		asistencia1Repository.save(asistencia1);
 		return "Guardado";
 	}
-
 
 	@RequestMapping(value = "/editarAsistencia", method = RequestMethod.PUT)
 	public String editarAsistencia(@Valid @RequestBody Asistencia1 narracion) {
@@ -722,8 +720,13 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(asistencia1Repository.obtenerPersonas());
 	}
 
-	@RequestMapping(value = "/obtenerPersonasPorCategoria1", method = RequestMethod.GET)
-	public String obtenerPersonasPorCategoria1() {
-		return JsonManager.toJson(asistencia1Repository.obtenerPersonas1());
+	@RequestMapping(value = "/obtenerPersonasPorActividad/{id}", method = RequestMethod.GET)
+	public String obtenerPersonasPorActividad(@PathVariable("id") long id) {
+		return JsonManager.toJson(asistencia1Repository.obtenerPersonasPorActividad(id));
+	}
+
+	@RequestMapping(value = "/obtenerPersonasPorActividad1/{id}", method = RequestMethod.GET)
+	public String obtenerPersonasPorActividad1(@PathVariable("id") long id) {
+		return JsonManager.toJson(asistencia1Repository.obtenerPersonasPorActividad1(id));
 	}
 }

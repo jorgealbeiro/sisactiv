@@ -51,7 +51,7 @@ public class SerialComm {
 				if (inputLine.startsWith("Card UID: ")) {
 //					System.out.println("input: " + inputLine.substring(10, 21));
 					manilla = inputLine.substring(10, 21);
-					System.out.println("manilla: "+manilla);
+					System.out.println("manilla: " + manilla);
 				}
 			} catch (SerialPortException ex) {
 				Logger.getLogger(SerialComm.class.getName()).log(Level.SEVERE, null, ex);
@@ -60,7 +60,7 @@ public class SerialComm {
 			}
 		}
 	};
-	
+
 	public static void initialize() {
 		new Thread(new Runnable() {
 
@@ -81,15 +81,10 @@ public class SerialComm {
 		}).start();
 	}
 
-	
-
 	public static void main(String[] args) {
-		
-		
+
 		SerialComm.getInstance();
 		SerialComm.initialize();
-		
-		
 
 	}
 }
