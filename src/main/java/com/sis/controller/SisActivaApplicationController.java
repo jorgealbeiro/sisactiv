@@ -324,8 +324,7 @@ public class SisActivaApplicationController {
 		actividadRepository.save(h);
 		return "Actividad Finalizada";
 	}
-	
-	
+
 	@RequestMapping(value = "/editarActividad/{cedula}", method = RequestMethod.PUT)
 	public String editarActividad(@Valid @RequestBody Actividad actividad, @PathVariable("cedula") Long cedulaPersona) {
 		System.out.println("A editar" + JsonManager.toJson(actividad));
@@ -691,17 +690,21 @@ public class SisActivaApplicationController {
 	@RequestMapping(value = "/registrarAsistencia/{act}", method = RequestMethod.POST)
 	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1, @PathVariable("act") Long id) {
 		AdultoMayor adultoMayor = adultoMayorRepository.obtenerAdultoManilla(SerialComm.getInstance().manilla);
-//		AdultoMayor adultoMayor = adultoMayorRepository.obtenerAdultoManilla("AB 1C D0 34");
-		Collection<Asistencia1> asis = asistencia1Repository.validarasistencia(id, adultoMayor.getCedula());
-		if (asis.size() > 0) {
-			return adultoMayor.getNombre() + " ya se registro a la actividad";
-		} else {
-			asistencia1.setCedulaAdulto(adultoMayor);
-			Actividad a = actividadRepository.findById(id).get();
-			asistencia1.setIdActividad(a);
-			asistencia1Repository.save(asistencia1);
-			return "Asistencia registrada";
+		if (adultoMayor != null) {
+			Collection<Asistencia1> asis = asistencia1Repository.validarasistencia(id, adultoMayor.getCedula());
+			if (asis.size() > 0) {
+				return adultoMayor.getNombre() + " ya se registro a la actividad";
+			} else {
+				asistencia1.setCedulaAdulto(adultoMayor);
+				Actividad a = actividadRepository.findById(id).get();
+				asistencia1.setIdActividad(a);
+				asistencia1Repository.save(asistencia1);
+				return "Asistencia registrada";
+			}
+		}else {
+			return "Manilla no registrada en el sistema";
 		}
+
 	}
 
 	@RequestMapping(value = "/registrarAsistencia", method = RequestMethod.POST)
@@ -733,7 +736,7 @@ public class SisActivaApplicationController {
 			Collection<Object> vv = asistencia1Repository.obtenerPersonas(ll.get(i));
 			listna.add(new NaCaAd(l2.get(i), vv.size()));
 		}
-		
+
 		return listna;
 	}
 
