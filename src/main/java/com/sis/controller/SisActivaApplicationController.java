@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -40,7 +41,7 @@ import rfid.SerialComm;
 @RestController
 public class SisActivaApplicationController {
 
-	int vez = 0;
+	int vez = 1;
 	String idmanilla = "";
 
 	@Autowired
@@ -653,6 +654,13 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(narracionRepository.save(narracion));
 	}
 
+	@RequestMapping(value = "/obtenerIdNarracciones", method = RequestMethod.GET)
+	public @ResponseBody String obtenerIdNarracciones() {
+		String nombreArchivo = UUID.randomUUID().toString().concat("_");
+//		.concat(Na.getOriginalFilename().replaceAll(" ", "_"));
+		return nombreArchivo;
+	}
+
 //	---------------------ASISTENCIA -------------------------------------
 
 	/**
@@ -746,7 +754,7 @@ public class SisActivaApplicationController {
 		return asistencia1Repository.obtenerPersonasPorCategoriaId(id);
 
 	}
-	
+
 	@RequestMapping(value = "/obtenerPresupuestoPorCategoriaid/{id}", method = RequestMethod.GET)
 	public @ResponseBody List<Object> obtenerPresupuestoPorCategoriaid(@PathVariable("id") int id) {
 		return asistencia1Repository.obtenerPresupuestoPorCategoriaid(id);
