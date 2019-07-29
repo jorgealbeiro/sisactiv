@@ -654,10 +654,9 @@ public class SisActivaApplicationController {
 		return JsonManager.toJson(narracionRepository.save(narracion));
 	}
 
-	@RequestMapping(value = "/obtenerIdNarracciones", method = RequestMethod.GET)
+	@RequestMapping(value = "/obtenerIdNombreNarracciones", method = RequestMethod.GET)
 	public @ResponseBody String obtenerIdNarracciones() {
 		String nombreArchivo = UUID.randomUUID().toString().concat("_");
-//		.concat(Na.getOriginalFilename().replaceAll(" ", "_"));
 		return nombreArchivo;
 	}
 

@@ -43,6 +43,15 @@ public class Actividad {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fecha;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd-HH:mm:ss", timezone="GMT-5")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date fechaInicio;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd-HH:mm:ss", timezone="GMT-5")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date fechaFin;
+	
+	
 	@Enumerated(EnumType.STRING)
 	private Estado estado;
 	
@@ -121,6 +130,22 @@ public class Actividad {
 
 	public void setEstadoActividad(EstadoActividad estadoActividad) {
 		this.estadoActividad = estadoActividad;
+	}
+
+	public Date getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+
+	public Date getFechaFin() {
+		return fechaFin;
+	}
+
+	public void setFechaFin(Date fechaFin) {
+		this.fechaFin = fechaFin;
 	}
 	
 	
