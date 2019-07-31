@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -282,6 +283,8 @@ public class SisActivaApplicationController {
 			@PathVariable("cedula") Long cedulaPersona) {
 		Persona persona = personaRepository.findById(cedulaPersona).get();
 		actividad.setCedula(persona);
+		actividad.setEstado(Estado.ACTIVO);
+		actividad.setEstadoActividad(EstadoActividad.SINREALIZAR);
 		actividadRepository.save(actividad);
 		return "Guardado";
 	}
@@ -414,6 +417,7 @@ public class SisActivaApplicationController {
 			return "Ya esta registrada esa identificacion";
 		} else {
 			adultoMayor.setManilla("no tiene");
+			adultoMayor.setEstadoAfiliacion(EstadoAfiliacion.ACTIVO);
 			adultoMayorRepository.save(adultoMayor);
 			return "Guardado";
 		}
@@ -715,6 +719,28 @@ public class SisActivaApplicationController {
 
 	}
 
+	
+	/**
+	 * Servicio que registra y agrega a la base de datos una narracion
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/registrarAsistenciaManual/{act}/{cedulaAdulto}", method = RequestMethod.POST)
+	public String registrarAsistenciaManual(@Valid @RequestBody Asistencia1 asistencia1, @PathVariable("act") Long id, @PathVariable("cedulaAdulto") Long cedula) {
+		AdultoMayor adultoMayor = adultoMayorRepository.findById(cedula).get();
+			Collection<Asistencia1> asis = asistencia1Repository.validarasistencia(id, adultoMayor.getCedula());
+			if (asis.size() > 0) {
+				return adultoMayor.getNombre() + " ya se registro a la actividad";
+			} else {
+				asistencia1.setCedulaAdulto(adultoMayor);
+				Actividad a = actividadRepository.findById(id).get();
+				asistencia1.setIdActividad(a);
+				asistencia1Repository.save(asistencia1);
+				return "Asistencia registrada";
+			}
+	}
+	
 	@RequestMapping(value = "/registrarAsistencia", method = RequestMethod.POST)
 	public String registrarAsistencia(@Valid @RequestBody Asistencia1 asistencia1) {
 		asistencia1Repository.save(asistencia1);
